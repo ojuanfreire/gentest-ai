@@ -140,8 +140,6 @@ Acesse: http://localhost:5173
   - VITE_SUPABASE_URL=
   - VITE_SUPABASE_ANON_KEY=
 
-> Observação: nunca compartilhe chaves secretas em repositórios públicos. Use secrets do GitHub para CI/CD e .env local para desenvolvimento.
-
 ---
 
 ## Execução de Testes (TDD)
