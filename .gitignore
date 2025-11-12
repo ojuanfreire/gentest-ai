@@ -1,0 +1,24 @@
+# Node
+node_modules/
+dist/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Supabase
+.supabase/
+supabase/functions/node_modules/
+supabase/functions/.env
+
+# App (Vite / React)
+app/dist/
+app/node_modules/
+app/.env.local
+app/coverage/
+
+# OS
+.DS_Store
+Thumbs.db

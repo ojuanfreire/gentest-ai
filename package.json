@@ -1,0 +1,16 @@
+{
+  "name": "gentest-ai",
+  "version": "1.0.0",
+  "description": "Projeto da disciplina **INF 323 - Engenharia de Software 2**. Plataforma SaaS para geração de artefatos de teste de software com suporte a Inteligência Artificial.",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "app"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
