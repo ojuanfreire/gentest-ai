@@ -80,5 +80,36 @@ export const useAuth = () => {
     }
   };
 
-  return { loading, error, handleSignIn, handleSignUp };
+  const handlePasswordReset = async (email: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Código original (chamada real ao serviço)
+      // await authService.sendPasswordResetEmail(email);
+
+      // Mock da chamada de recuperação
+      console.log(`Mock: Enviando link de reset para: ${email}`);
+
+      // Simula um atraso de rede
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Simula erro
+      if (email.includes("error@")) {
+        throw new Error("E-mail não encontrado ou erro no servidor.");
+      }
+
+      console.log("Mock: Link de reset enviado!");
+      return true;
+    } catch (err: any) {
+      // Captura o erro do serviço para exibir na UI
+      console.error("Mock: Erro ao enviar link:", err.message);
+      setError(err.message);
+      return false;
+    } finally {
+      // Garante que o loading pare, mesmo se der erro
+      setLoading(false);
+    }
+  };
+
+  return { loading, error, handleSignIn, handleSignUp, handlePasswordReset };
 };

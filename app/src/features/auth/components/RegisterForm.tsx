@@ -7,7 +7,7 @@ import { Input } from "../../../components/common/Input";
 export const RegisterForm = () => {
   const { loading, error, handleSignUp } = useAuth();
 
-  const [name, setName] = useState(""); 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,7 +16,7 @@ export const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError(null); 
+    setFormError(null);
 
     if (name.trim() === "") {
       setFormError("Por favor, informe seu nome.");
@@ -33,10 +33,7 @@ export const RegisterForm = () => {
       return;
     }
 
-    await handleSignUp(name, email, password); 
-
-    // Aqui, após o sucesso, você poderia redirecionar o usuário
-    // ou exibir uma mensagem de "Verifique seu e-mail".
+    await handleSignUp(name, email, password);
   };
 
   return (
