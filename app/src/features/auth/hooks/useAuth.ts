@@ -38,5 +38,78 @@ export const useAuth = () => {
     }
   };
 
-  return { loading, error, handleSignIn }; //
+  const handleSignUp = async (
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Código original (chamada real ao serviço)
+      // const user = await authService.signUp(name, email, password);
+
+      // Mock da chamada de registro
+      console.log(`Mock: Tentando registro para ${name} com: ${email}`);
+
+      // Simula um atraso de rede
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Simula erro
+      if (email.includes("error@")) {
+        throw new Error("Este e-mail já está em uso.");
+      }
+
+      // Simula um retorno de usuário bem-sucedido
+      const user = {
+        id: "mock-user-456",
+        name: name,
+        email: email,
+      };
+      // Fim do Mock
+
+      console.log("Mock: Registro bem-sucedido!");
+      return user;
+    } catch (err: any) {
+      // Captura o erro do serviço para exibir na UI
+      console.error("Mock: Erro no registro:", err.message);
+      setError(err.message);
+    } finally {
+      // Garante que o loading pare, mesmo se der erro
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async (email: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Código original (chamada real ao serviço)
+      // await authService.sendPasswordResetEmail(email);
+
+      // Mock da chamada de recuperação
+      console.log(`Mock: Enviando link de reset para: ${email}`);
+
+      // Simula um atraso de rede
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Simula erro
+      if (email.includes("error@")) {
+        throw new Error("E-mail não encontrado ou erro no servidor.");
+      }
+
+      console.log("Mock: Link de reset enviado!");
+      return true;
+    } catch (err: any) {
+      // Captura o erro do serviço para exibir na UI
+      console.error("Mock: Erro ao enviar link:", err.message);
+      setError(err.message);
+      return false;
+    } finally {
+      // Garante que o loading pare, mesmo se der erro
+      setLoading(false);
+    }
+  };
+
+  return { loading, error, handleSignIn, handleSignUp, handlePasswordReset };
 };
