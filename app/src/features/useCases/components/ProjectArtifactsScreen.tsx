@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useUseCases } from "../hooks/useUseCases";
 import { UseCaseCard } from "../components/UseCaseCard";
 import { Button } from "../../../components/common/Button";
 import { Plus } from "lucide-react";
+import { CreateUseCaseModal } from "../components/CreateUseCaseModal";
+import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
 export const ProjectArtifactsScreen = () => {
-  const { loading, error, useCases } = useUseCases();
+  const { loading, error, useCases, isSubmitting, handleCreateUseCase } =
+    useUseCases();
 
-  const handleNewUseCase = () => {
-    console.log("Clicou em Novo Caso de Uso");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleFormSubmit = async (data: UseCaseFormData) => {
+    const success = await handleCreateUseCase(data);
+    if (success) {
+      setIsModalOpen(false);
+    }
   };
 
   const renderLoading = () => (
@@ -46,7 +54,7 @@ export const ProjectArtifactsScreen = () => {
               Casos de Uso
             </h2>
             <Button
-              onClick={handleNewUseCase}
+              onClick={() => setIsModalOpen(true)}
               disabled={loading}
               className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50"
             >
@@ -67,6 +75,13 @@ export const ProjectArtifactsScreen = () => {
           </div>
         </div>
       </main>
+
+      <CreateUseCaseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 };

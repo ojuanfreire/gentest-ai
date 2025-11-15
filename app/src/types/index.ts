@@ -18,4 +18,8 @@ export type UseCase = {
   description: string;
   projectId: string;
   createdAt: string;
+  actor: string;
+  preconditions: string;
+  mainFlow: string;
+  alternativeFlows: string;
 };
