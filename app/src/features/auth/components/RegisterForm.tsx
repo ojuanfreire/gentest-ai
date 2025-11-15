@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
 import { Input } from "../../../components/common/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
   const { loading, error, handleSignUp } = useAuth();
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,26 +16,50 @@ export const RegisterForm = () => {
 
   const [formError, setFormError] = useState<string | null>(null);
 
+  const validatePassword = (password: string) => {
+    const validations = {
+      minLength: /.{6,}/,
+      hasUpperCase: /[A-Z]/,
+      hasLowerCase: /[a-z]/,
+      hasDigit: /\d/,
+      hasSpecialChar: /[\W_]/,
+    };
+
+    if (!validations.minLength.test(password)) {
+      return "A senha deve ter no mínimo 6 caracteres.";
+    }
+    if (!validations.hasUpperCase.test(password)) {
+      return "A senha deve conter pelo menos uma letra maiúscula.";
+    }
+    if (!validations.hasLowerCase.test(password)) {
+      return "A senha deve conter pelo menos uma letra minúscula.";
+    }
+    if (!validations.hasDigit.test(password)) {
+      return "A senha deve conter pelo menos um dígito.";
+    }
+    if (!validations.hasSpecialChar.test(password)) {
+      return "A senha deve conter pelo menos um caractere especial.";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
 
-    if (name.trim() === "") {
-      setFormError("Por favor, informe seu nome.");
+    const validationError = validatePassword(password);
+
+    if (validationError) {
+      setFormError(validationError);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setFormError("As senhas não coincidem.");
-      return;
+    try {
+      await handleSignUp(name, email, password);
+      navigate("/");
+    } catch {
+      setFormError("Erro ao registrar. Tente novamente.");
     }
-
-    if (password.length < 6) {
-      setFormError("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
-    await handleSignUp(name, email, password);
   };
 
   return (
