@@ -7,7 +7,7 @@ import { RegisterForm } from "./features/auth/components/RegisterForm";
 function App() {
   return (
     <>
-      <LoginForm />
+      <ForgotPasswordForm />
     </>
   );
 }
