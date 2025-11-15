@@ -54,6 +54,21 @@ export const RegisterForm = () => {
       return;
     }
 
+    if (name.trim() === "") {
+      setFormError("O nome é obrigatório.");
+      return;
+    }
+
+    if (email.trim() === "") {
+      setFormError("O e-mail é obrigatório.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError("As senhas não coincidem.");
+      return;
+    }
+
     try {
       await handleSignUp(name, email, password);
       navigate("/");

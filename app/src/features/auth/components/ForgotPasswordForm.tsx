@@ -71,7 +71,7 @@ export const ForgotPasswordForm = () => {
           <p className="mt-4 text-slate-400">
             Lembrou a senha?{" "}
             <Link
-              to="/" // Mudar para a rota de "login" depois
+              to="/"
               className="font-medium text-blue-500 transition-colors hover:underline"
             >
               Entrar

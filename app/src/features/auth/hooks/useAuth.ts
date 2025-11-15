@@ -53,6 +53,7 @@ export const useAuth = () => {
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
+        throw error;
       }
     } finally {
       // Garante que o loading pare, mesmo se der erro
