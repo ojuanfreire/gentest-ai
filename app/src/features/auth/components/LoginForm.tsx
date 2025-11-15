@@ -3,17 +3,24 @@ import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
 import { Input } from "../../../components/common/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const { loading, error, handleSignIn } = useAuth();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleSignIn(email, password);
+
+    try {
+      await handleSignIn(email, password);
+      navigate("/artifacts");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

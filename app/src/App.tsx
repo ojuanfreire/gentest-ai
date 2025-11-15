@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import { ForgotPasswordForm } from "./features/auth/components/ForgotPasswordForm";
 import { LoginForm } from "./features/auth/components/LoginForm";
 import { RegisterForm } from "./features/auth/components/RegisterForm";
-// import { ProjectArtifactsScreen } from "./features/useCases/components/ProjectArtifactsScreen";
+import { ProjectArtifactsScreen } from "./features/useCases/components/ProjectArtifactsScreen";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/artifacts" element={<ProjectArtifactsScreen />} />
       </Routes>
     </>
   );

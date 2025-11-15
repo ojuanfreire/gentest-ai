@@ -72,8 +72,9 @@ export const RegisterForm = () => {
     try {
       await handleSignUp(name, email, password);
       navigate("/");
-    } catch {
+    } catch(error) {
       setFormError("Erro ao registrar. Tente novamente.");
+      console.log(error);
     }
   };
 
