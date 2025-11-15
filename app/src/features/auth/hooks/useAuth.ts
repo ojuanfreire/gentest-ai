@@ -1,9 +1,8 @@
-import { useState } from "react"; //
-// Importa o serviço, descomentar quando for implementado
-// import * as authService from '../services/authService'; //
+import { useState } from "react";
+import * as authService from "../services/authService";
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false); //
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSignIn = async (email: string, password: string) => {
@@ -29,9 +28,11 @@ export const useAuth = () => {
       // Fim do Mock
 
       return user;
-    } catch (err: any) {
+    } catch (error) {
       // Captura o erro do serviço para exibir na UI
-      setError(err.message); //
+      if (error instanceof Error) {
+        setError(error.message); //
+      }
     } finally {
       // Garante que o loading pare, mesmo se der erro
       setLoading(false); //
@@ -46,34 +47,13 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      // Código original (chamada real ao serviço)
-      // const user = await authService.signUp(name, email, password);
+      const user = await authService.signUp(name, email, password);
 
-      // Mock da chamada de registro
-      console.log(`Mock: Tentando registro para ${name} com: ${email}`);
-
-      // Simula um atraso de rede
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simula erro
-      if (email.includes("error@")) {
-        throw new Error("Este e-mail já está em uso.");
-      }
-
-      // Simula um retorno de usuário bem-sucedido
-      const user = {
-        id: "mock-user-456",
-        name: name,
-        email: email,
-      };
-      // Fim do Mock
-
-      console.log("Mock: Registro bem-sucedido!");
       return user;
-    } catch (err: any) {
-      // Captura o erro do serviço para exibir na UI
-      console.error("Mock: Erro no registro:", err.message);
-      setError(err.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     } finally {
       // Garante que o loading pare, mesmo se der erro
       setLoading(false);
@@ -100,11 +80,11 @@ export const useAuth = () => {
 
       console.log("Mock: Link de reset enviado!");
       return true;
-    } catch (err: any) {
-      // Captura o erro do serviço para exibir na UI
-      console.error("Mock: Erro ao enviar link:", err.message);
-      setError(err.message);
-      return false;
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        return false;
+      }
     } finally {
       // Garante que o loading pare, mesmo se der erro
       setLoading(false);

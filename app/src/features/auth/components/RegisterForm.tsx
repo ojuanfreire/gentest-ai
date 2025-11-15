@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
 import { Input } from "../../../components/common/Input";
+import { Link } from "react-router-dom";
 
 export const RegisterForm = () => {
   const { loading, error, handleSignUp } = useAuth();
@@ -98,12 +99,12 @@ export const RegisterForm = () => {
         <div className="mt-6 text-center text-sm">
           <p className="mt-4 text-slate-400">
             Já possui uma conta?{" "}
-            <a
-              href="#" // Mudar para a rota de "login" depois
+            <Link
+              to="/"
               className="font-medium text-blue-500 transition-colors hover:underline"
             >
               Entrar
-            </a>
+            </Link>
           </p>
         </div>
       </form>

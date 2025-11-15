@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
 import { Input } from "../../../components/common/Input";
+import { Link } from "react-router-dom";
 
 export const LoginForm = () => {
   const { loading, error, handleSignIn } = useAuth();
@@ -55,21 +56,21 @@ export const LoginForm = () => {
         </Button>
 
         <div className="mt-6 text-center text-sm">
-          <a
-            href="#" // Mudar para a rota de "esqueci a senha" depois
+          <Link
+            to="/forgot-password"
             className="font-medium text-slate-400 transition-colors hover:text-blue-500 hover:underline"
           >
             Esqueci minha senha
-          </a>
+          </Link>
 
           <p className="mt-4 text-slate-400">
             Ainda não possui uma conta?{" "}
-            <a
-              href="#" // Mudar para a rota de "registro" depois
+            <Link
+              to="/register"
               className="font-medium text-blue-500 transition-colors hover:underline"
             >
               Registre-se
-            </a>
+            </Link>
           </p>
         </div>
       </form>
