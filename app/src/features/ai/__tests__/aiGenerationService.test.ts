@@ -49,9 +49,7 @@ describe("aiGenerationService", () => {
 
     const result = await aiGenerationService.generateTestCases(mockFrontendUseCase);
 
-    expect(supabase.functions.invoke).toHaveBeenCalledWith(
-      "generate-test-cases",
-      {
+    expect(supabase.functions.invoke).toHaveBeenCalledWith( "generate-test-cases", {
         body: {
           useCase: {
             name: "Teste de Login",
@@ -61,8 +59,7 @@ describe("aiGenerationService", () => {
             alternativeFlows: "Nenhum",
           },
         },
-      }
-    );
+      });
 
     expect(result).toEqual(mockGeneratedTests);
   });
