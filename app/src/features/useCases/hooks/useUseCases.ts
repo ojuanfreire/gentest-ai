@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import type { UseCase } from "../../../types/index.ts";
+import type { TestCase } from "../../../types/index.ts";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
 // Mock de Dados
-// Simula dados que viriam do Supabase
 const MOCK_USE_CASES: UseCase[] = [
   {
     id: "uc-001",
@@ -43,7 +43,7 @@ export const useUseCases = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Função para buscar os casos de uso (atualmente mockada)
-  const fetchUseCases = async (projectId: string) => {
+  const fetchUseCases = useCallback(async (projectId: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -60,6 +60,41 @@ export const useUseCases = () => {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const getUseCaseById = useCallback(
+    async (id: string): Promise<UseCase | undefined> => {
+      setLoading(true);
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return MOCK_USE_CASES.find((uc) => uc.id === id);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const handleDeleteUseCase = async (useCaseId: string) => {
+    console.log("Tentando excluir o caso de uso:", useCaseId);
+    setIsSubmitting(true);
+
+    try {
+      // Simula a chamada à API para deletar
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setUseCases((currentUseCases) =>
+        currentUseCases.filter((uc) => uc.id !== useCaseId)
+      );
+
+      console.log("Caso de uso excluído do estado local!");
+      return true;
+    } catch (err: any) {
+      console.error("Erro ao excluir caso de uso:", err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCreateUseCase = async (data: UseCaseFormData) => {
@@ -70,9 +105,8 @@ export const useUseCases = () => {
       // Simula a chamada à API para criar caso de uso
       // Código original (chamada real ao serviço)
       // await useCaseService.createUseCase(data);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 segundo
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simula o retorno da API com o novo caso de uso
       const newUseCase: UseCase = {
         id: `uc-${Math.random().toString(36).substring(2, 9)}`,
         projectId: "proj-123",
@@ -98,26 +132,41 @@ export const useUseCases = () => {
     }
   };
 
+  const handleEditUseCase = async (updatedUseCase: UseCase) => {
+    console.log("Tentando editar o caso de uso:", updatedUseCase);
+    setIsSubmitting(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setUseCases((currentUseCases) =>
+        currentUseCases.map((uc) =>
+          uc.id === updatedUseCase.id ? updatedUseCase : uc
+        )
+      );
+
+      console.log("Caso de uso atualizado no estado local!");
+      return true;
+    } catch (err: any) {
+      console.error("Erro ao editar caso de uso:", err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     fetchUseCases("proj-123");
-  }, []);
+  }, [fetchUseCases]);
 
-  // Usado para atualizar o título da página
-  useEffect(() => {
-    console.log("EFEITO 2 (Título) disparado!");
-
-    if (loading) {
-      document.title = "Carregando Casos de Uso...";
-    } else if (error) {
-      document.title = "Erro ao carregar";
-    } else {
-      document.title = `Projeto (${useCases.length} Casos de Uso)`;
-    }
-
-    return () => {
-      document.title = "GenTest AI"; // Limpa o título ao sair da tela
-    };
-  }, [loading, error, useCases]);
-
-  return { loading, error, useCases, isSubmitting, handleCreateUseCase };
+  return {
+    loading,
+    error,
+    useCases,
+    isSubmitting,
+    getUseCaseById,
+    handleCreateUseCase,
+    handleEditUseCase,
+    handleDeleteUseCase,
+  };
 };

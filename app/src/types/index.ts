@@ -12,6 +12,11 @@ export type Project = {
   createdAt: string;
 };
 
+export type TestCase = {
+  id: string;
+  title: string;
+};
+
 export type UseCase = {
   id: string;
   title: string;

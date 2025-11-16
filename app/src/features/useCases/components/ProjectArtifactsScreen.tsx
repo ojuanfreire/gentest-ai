@@ -6,17 +6,49 @@ import { Button } from "../../../components/common/Button";
 import { Plus } from "lucide-react";
 import { CreateUseCaseModal } from "../components/CreateUseCaseModal";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
+import { EditUseCaseModal } from "../components/EditUseCaseModal";
+import type { UseCase } from "../../../types/index";
 
 export const ProjectArtifactsScreen = () => {
-  const { loading, error, useCases, isSubmitting, handleCreateUseCase } =
-    useUseCases();
+  const {
+    loading,
+    error,
+    useCases,
+    isSubmitting,
+    handleCreateUseCase,
+    handleEditUseCase,
+  } = useUseCases();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUseCase, setSelectedUseCase] = useState<UseCase | null>(null);
 
-  const handleFormSubmit = async (data: UseCaseFormData) => {
+  const handleCreateFormSubmit = async (data: UseCaseFormData) => {
     const success = await handleCreateUseCase(data);
     if (success) {
-      setIsModalOpen(false);
+      setIsCreateModalOpen(false);
+    }
+  };
+
+  const handleViewClick = (useCase: UseCase) => {
+    // Navegar para a tela do caso de uso
+    console.log("Cliquei num caso de uso.");
+  };
+
+  const handleOpenEditModal = (useCase: UseCase) => {
+    setSelectedUseCase(useCase);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedUseCase(null);
+    setIsEditModalOpen(false);
+  };
+
+  const handleEditFormSubmit = async (updatedUseCase: UseCase) => {
+    const success = await handleEditUseCase(updatedUseCase);
+    if (success) {
+      handleCloseEditModal();
     }
   };
 
@@ -36,7 +68,12 @@ export const ProjectArtifactsScreen = () => {
   const renderUseCases = () => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {useCases.map((useCase) => (
-        <UseCaseCard key={useCase.id} useCase={useCase} />
+        <UseCaseCard
+          key={useCase.id}
+          useCase={useCase}
+          onViewClick={handleViewClick}
+          onEditClick={handleOpenEditModal}
+        />
       ))}
     </div>
   );
@@ -54,7 +91,7 @@ export const ProjectArtifactsScreen = () => {
               Casos de Uso
             </h2>
             <Button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsCreateModalOpen(true)}
               disabled={loading}
               className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50"
             >
@@ -77,10 +114,18 @@ export const ProjectArtifactsScreen = () => {
       </main>
 
       <CreateUseCaseModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleFormSubmit}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateFormSubmit}
         isSubmitting={isSubmitting}
+      />
+
+      <EditUseCaseModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSubmit={handleEditFormSubmit}
+        isSubmitting={isSubmitting}
+        useCaseToEdit={selectedUseCase}
       />
     </div>
   );
