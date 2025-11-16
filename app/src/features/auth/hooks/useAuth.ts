@@ -9,33 +9,17 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      // Código original (chamada real ao serviço)
-      // const user = await authService.signIn(email, password);
-
-      // Mock da chamada ao serviço
-      // Remover ou comentar este bloco quando o authService estiver pronto
-      console.log("Mock: Tentando login com: " + email + " " + password);
-
-      // Simula um atraso de rede (ex: 1.5 segundos)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simula um retorno de usuário bem-sucedido
-      const user = {
-        id: "mock-user-123",
-        email: email,
-        name: "Usuário Mockado",
-      };
-      // Fim do Mock
+      const user = await authService.signIn(email, password);
 
       return user;
     } catch (error) {
-      // Captura o erro do serviço para exibir na UI
       if (error instanceof Error) {
-        setError(error.message); //
+        setError(error.message);
+        throw error;
       }
     } finally {
       // Garante que o loading pare, mesmo se der erro
-      setLoading(false); //
+      setLoading(false);
     }
   };
 
