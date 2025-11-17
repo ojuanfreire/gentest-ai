@@ -9,28 +9,11 @@ import { EditUseCaseModal } from "../components/EditUseCaseModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal"; // Ajuste o caminho se necessário
 import type { UseCase } from "../../../types/index";
 
-// --- MOCK PARA TESTES DE VISUALIZAÇÃO (HARDCODED) ---
-const MOCK_USE_CASE_DETAILS: UseCase = {
-  id: "uc-mock-view",
-  title: "Visualizar Relatórios de Vendas (MOCK)",
-  description:
-    "Este é um caso de uso estático carregado localmente para testar o layout da tela de detalhes sem precisar de rotas ou backend.",
-  actor: "Gerente de Vendas",
-  preconditions: "O usuário deve estar logado com perfil de gerência.",
-  mainFlow:
-    "1. O Gerente acessa a área de relatórios.\n2. Seleciona o período desejado.\n3. Clica em 'Gerar PDF'.\n4. O sistema faz o download do arquivo.",
-  alternativeFlows:
-    "3a. Nenhum dado encontrado: O sistema exibe alerta 'Sem vendas no período'.",
-  projectId: "proj-test-local",
-  createdAt: new Date().toISOString(),
-};
-// ----------------------------------------------------
-
 export const UseCaseDetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { handleDeleteUseCase, handleEditUseCase, isSubmitting } =
+  const { handleDeleteUseCase, handleEditUseCase, isSubmitting, getUseCaseById } =
     useUseCases();
 
   const [useCase, setUseCase] = useState<UseCase | null>(null);
@@ -41,21 +24,32 @@ export const UseCaseDetailsScreen = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
-    // Usaria o ID para buscar o Caso de Uso.
-    // Aqui está mockado
-    setUseCase(MOCK_USE_CASE_DETAILS);
-    setIsLoading(false);
-  }, [id]);
+    if (!id) {
+      navigate(-1);
+      return;
+    }
+    
+    const fetchDetails = async () => {
+      setIsLoading(true);
+      const data = await getUseCaseById(id);
+      if (data) {
+        setUseCase(data);
+      } else {
+        setUseCase(null);
+      }
+      setIsLoading(false);
+    };
+      fetchDetails();
+  }, [id, getUseCaseById, navigate]);
 
   const handleConfirmDelete = async () => {
     if (!useCase) return;
 
-    // Simulação da exclusão
-    // const success = await handleDeleteUseCase(useCase.id);
-    alert("Caso de uso excluído com sucesso (Simulação)!");
-
-    setIsDeleteModalOpen(false);
-    navigate(-1); // Volta para a listagem
+    const success = await handleDeleteUseCase(useCase.id); // Chama o hook real
+    if (success) {
+      setIsDeleteModalOpen(false);
+      navigate(-1);
+    }
   };
 
   const handleEditSubmit = async (updatedData: UseCase) => {

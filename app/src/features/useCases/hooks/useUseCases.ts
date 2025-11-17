@@ -31,11 +31,19 @@ export const useUseCases = () => {
 
   const getUseCaseById = useCallback(
     async (id: string): Promise<UseCase | undefined> => {
-      if (useCases.length > 0) {
-        return useCases.find((uc) => uc.id === id);
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await useCaseService.getUseCaseById(id);
+        return data;
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar caso de uso.");
+        return undefined;
+      } finally {
+        setLoading(false);
       }
-      return undefined;
-    },[useCases]);
+    },
+    []);
 
   const handleDeleteUseCase = async (useCaseId: string) => {
     setIsSubmitting(true);

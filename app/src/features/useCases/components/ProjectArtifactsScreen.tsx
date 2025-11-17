@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { useUseCases } from "../hooks/useUseCases";
 import { UseCaseCard } from "../components/UseCaseCard";
 import { Button } from "../../../components/common/Button";
@@ -8,6 +7,7 @@ import { CreateUseCaseModal } from "../components/CreateUseCaseModal";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
 import type { UseCase } from "../../../types/index";
+import { useNavigate } from "react-router-dom";
 
 export const ProjectArtifactsScreen = () => {
   const {
@@ -18,6 +18,8 @@ export const ProjectArtifactsScreen = () => {
     handleCreateUseCase,
     handleEditUseCase,
   } = useUseCases();
+
+  const navigate = useNavigate();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -32,7 +34,7 @@ export const ProjectArtifactsScreen = () => {
 
   const handleViewClick = (useCase: UseCase) => {
     // Navegar para a tela do caso de uso
-    console.log("Cliquei num caso de uso.");
+    navigate(`/use-case/${useCase.id}`);
   };
 
   const handleOpenEditModal = (useCase: UseCase) => {

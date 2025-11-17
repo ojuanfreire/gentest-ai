@@ -61,7 +61,7 @@ export const CreateUseCaseModal = ({
       aria-modal="true"
       role="dialog"
     >
-      <div className="w-full max-w-2xl rounded-lg bg-slate-800 p-6 shadow-xl">
+      <div className="w-full max-w-2xl rounded-lg bg-slate-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">Criar Caso de Uso</h2>
@@ -171,7 +171,10 @@ export const CreateUseCaseModal = ({
                 id="mainFlow"
                 value={mainFlow}
                 onChange={(e) => setMainFlow(e.target.value)}
-                placeholder="Ex: 1. O usuário informa o e-mail..."
+                placeholder="Ex:
+  1. O usuário informa o e-mail 
+  2. O usuário informa a senha 
+  3. O usuário clica no botão 'Entrar'"
                 rows={8}
                 required
               />
