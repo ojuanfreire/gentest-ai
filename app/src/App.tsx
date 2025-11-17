@@ -11,10 +11,11 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<UseCaseDetailsScreen />} />
+        <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
         <Route path="/artifacts" element={<ProjectArtifactsScreen />} />
+        <Route path="/use-case/:id" element={<UseCaseDetailsScreen />} />
       </Routes>
     </>
   );

@@ -76,7 +76,7 @@ export const EditUseCaseModal = ({
       aria-modal="true"
       role="dialog"
     >
-      <div className="w-full max-w-3xl rounded-lg bg-slate-800 p-6 shadow-xl">
+      <div className="w-full max-w-2xl rounded-lg bg-slate-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">

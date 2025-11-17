@@ -13,8 +13,13 @@ export type Project = {
 };
 
 export type TestCase = {
-  id: string;
-  title: string;
+  id: number;
+  createdAt: string;
+  type: string;
+  precondition: string;
+  steps: string;
+  expectedResult: string;
+  useCaseId: number;
 };
 
 export type UseCase = {
