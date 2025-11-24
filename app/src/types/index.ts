@@ -13,13 +13,22 @@ export type Project = {
 };
 
 export type TestCase = {
-  id: number;
-  createdAt: string;
-  type: string;
-  precondition: string;
+  id: string;
+  useCaseId: string;
+  title: string;
+  description: string;
   steps: string;
   expectedResult: string;
-  useCaseId: number;
+};
+
+export type SkeletonFramework = "JavaScript + Cypress" | "Python + Playwright";
+
+export type GeneratedSkeleton = {
+  id: string;
+  testCaseId: string;
+  framework: SkeletonFramework;
+  code: string;
+  createdAt: string;
 };
 
 export type UseCase = {

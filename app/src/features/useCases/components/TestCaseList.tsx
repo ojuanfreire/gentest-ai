@@ -3,7 +3,6 @@ import { Button } from "../../../components/common/Button";
 import { useTestCases } from "../hooks/useTestCases";
 import type { TestCase } from "../../../types";
 
-
 type TestCaseListProps = {
   useCaseId: string | number;
 };
@@ -55,7 +54,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
             <button
               className="flex-shrink-0 text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline"
               onClick={() => {
-                alert(`Navegar para detalhes do teste: ${test.id}`);
+                alert(`Navegar para detalhes do teste: ${test.id}`); // Implementar a navegação para a tela de detalhes
               }}
             >
               Visualizar Detalhes
