@@ -10,10 +10,10 @@ lerna-debug.log*
 
 # Supabase
 .supabase/
-supabase/functions/node_modules/
-supabase/functions/.env
-supabase/supabase/functions/.env
-supabase/payload.json
+.supabase/functions/node_modules/
+.supabase/functions/.env
+.supabase/supabase/functions/.env
+.supabase/payload.json
 
 # App (Vite / React)
 app/dist/
