@@ -1,6 +1,6 @@
 # GenTest AI
 
-Projeto da disciplina **INF 323 - Engenharia de Software 2** e **"INF 321 - Projeto e Desenvolvimento de Sistemas Para a Web "**. Plataforma SaaS para geração de artefatos de teste de software com suporte a Inteligência Artificial.
+Projeto das disciplinas **INF 323 - Engenharia de Software 2** e **INF 321 - Projeto e Desenvolvimento de Sistemas Para a Web**. Plataforma SaaS para geração de artefatos de teste de software com suporte a Inteligência Artificial.
 
 ---
 
