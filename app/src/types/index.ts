@@ -15,8 +15,9 @@ export type Project = {
 export type TestCase = {
   id: string;
   useCaseId: string;
-  title: string;
-  description: string;
+  type: string;
+  createdAt: string;
+  precondition: string;
   steps: string;
   expectedResult: string;
 };
