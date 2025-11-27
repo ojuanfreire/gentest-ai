@@ -1,9 +1,0 @@
-{
-  "useCase": {
-    "name": "Login de Usuário",
-    "actor": "Usuário",
-    "preConditions": "Usuário possui uma conta válida.",
-    "mainFlow": "1. Usuário acessa a página de login. 2. Usuário digita e-mail. 3. Usuário digita senha. 4. Usuário clica em 'Entrar'. 5. Sistema valida as credenciais. 6. Sistema redireciona para a dashboard.",
-    "alternativeFlows": "Fluxo de Senha Incorreta: 1. Sistema mostra 'E-mail ou senha incorretos'."
-  }
-}
