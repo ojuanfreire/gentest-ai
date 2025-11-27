@@ -3,12 +3,13 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
-import { TestCaseDetailsScreen } from "./features/testCases/components/TestCaseDetailsScreen.tsx";
+import { CodeSkeletonScreen } from "./features/testCases/components/CodeSkeletonScreen.tsx";
+import { ProjectMenuScreen } from "./features/projects/components/ProjectMenuScreen.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <TestCaseDetailsScreen />
+      <ProjectMenuScreen />
     </BrowserRouter>
   </StrictMode>
 );
