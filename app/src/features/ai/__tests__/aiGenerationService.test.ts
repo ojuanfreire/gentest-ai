@@ -3,6 +3,7 @@ import { supabase } from "../../../api/supabaseClient";
 import { aiGenerationService } from "../services/aiGenerationService";
 import type { UseCase } from "../../../types";
 
+// Mock do Supabase
 vi.mock("../../../api/supabaseClient", () => ({
   supabase: {
     functions: {
@@ -11,7 +12,7 @@ vi.mock("../../../api/supabaseClient", () => ({
   },
 }));
 
-// Mockando um caso de uso no formato esperado pelo frontend
+// Dados Mockados
 const mockFrontendUseCase: UseCase = {
   id: "uc-123",
   title: "Teste de Login",
@@ -24,8 +25,6 @@ const mockFrontendUseCase: UseCase = {
   description: "Um caso de uso de teste",
 };
 
-
-// Mockando a resposta gerada pela Edge Function
 const mockGeneratedTests = [
   {
     type: "Caminho Feliz",
@@ -40,8 +39,8 @@ describe("aiGenerationService", () => {
     vi.resetAllMocks();
   });
 
-  it("deve chamar a Edge Function com os dados traduzidos e retornar os casos de teste", async () => {
-    
+  it("deve transformar o payload corretamente e chamar a Edge Function", async () => {
+    // Configura sucesso
     (supabase.functions.invoke as Mock).mockResolvedValue({
       data: mockGeneratedTests,
       error: null,
@@ -49,23 +48,37 @@ describe("aiGenerationService", () => {
 
     const result = await aiGenerationService.generateTestCases(mockFrontendUseCase);
 
-    expect(supabase.functions.invoke).toHaveBeenCalledWith( "generate-test-cases", {
-        body: {
-          useCase: {
-            name: "Teste de Login",
-            actor: "Usuário",
-            preConditions: "Estar na tela de login",
-            mainFlow: "Fazer X, Y, Z",
-            alternativeFlows: "Nenhum",
-          },
+    // Verifica a transformação de dados (title -> name, preconditions -> preConditions, etc)
+    expect(supabase.functions.invoke).toHaveBeenCalledWith("generate-test-cases", {
+      body: {
+        useCase: {
+          name: "Teste de Login",
+          actor: "Usuário",
+          preConditions: "Estar na tela de login",
+          mainFlow: "Fazer X, Y, Z",
+          alternativeFlows: "Nenhum",
         },
-      });
+      },
+    });
 
     expect(result).toEqual(mockGeneratedTests);
   });
 
-  it("deve lançar um erro se a Edge Function falhar", async () => {
-    const mockError = { message: "Função falhou" };
+  it("deve lidar com retorno vazio da IA sem quebrar", async () => {
+    // Simula a IA retornando um array vazio (ex: não conseguiu gerar nada)
+    (supabase.functions.invoke as Mock).mockResolvedValue({
+      data: [],
+      error: null,
+    });
+
+    const result = await aiGenerationService.generateTestCases(mockFrontendUseCase);
+
+    expect(result).toEqual([]);
+    expect(supabase.functions.invoke).toHaveBeenCalled();
+  });
+
+  it("deve lançar um erro legível se a Edge Function falhar", async () => {
+    const mockError = { message: "Timeout na geração" };
 
     (supabase.functions.invoke as Mock).mockResolvedValue({
       data: null,
@@ -74,6 +87,6 @@ describe("aiGenerationService", () => {
 
     await expect(
       aiGenerationService.generateTestCases(mockFrontendUseCase)
-    ).rejects.toThrow(mockError.message);
+    ).rejects.toThrow("Timeout na geração");
   });
 });
