@@ -14,7 +14,6 @@ export const Header = () => {
     avatarUrl: null, // Caso tenha foto, coloque a URL aqui
   };
 
-  // Fecha o menu se clicar fora dele
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -26,7 +25,7 @@ export const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    // Aqui você adicionará a lógica real de logout (ex: supabase.auth.signOut())
+    // Adicionar a lógica real de logout (ex: supabase.auth.signOut())
     console.log("Efetuando logout...");
 
     // Limpa dados locais se necessário
@@ -71,7 +70,6 @@ export const Header = () => {
               )}
             </div>
 
-            {/* Nome (Escondido em mobile muito pequeno se preferir, aqui deixei visível) */}
             <div className="hidden flex-col items-start text-left sm:flex">
               <span className="text-xs font-medium text-slate-200">
                 {user.name}
@@ -86,7 +84,6 @@ export const Header = () => {
             />
           </button>
 
-          {/* Dropdown Menu */}
           {isMenuOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 origin-top-right rounded-lg border border-slate-700 bg-slate-800 py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="border-b border-slate-700 px-4 py-3">
