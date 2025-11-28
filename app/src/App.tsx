@@ -6,6 +6,7 @@ import { LoginForm } from "./features/auth/components/LoginForm";
 import { RegisterForm } from "./features/auth/components/RegisterForm";
 import { ProjectArtifactsScreen } from "./features/useCases/components/ProjectArtifactsScreen";
 import { UseCaseDetailsScreen } from "./features/useCases/components/UseCaseDetailsScreen";
+import { TestCaseDetailsScreen } from "./features/testCases/components/TestCaseDetailsScreen";
 import { ProjectMenuScreen } from "./features/projects/components/ProjectMenuScreen";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/projects" element={<ProjectMenuScreen />} />
         <Route path="/project/:projectId/artifacts" element={<ProjectArtifactsScreen />} />
         <Route path="/use-case/:id" element={<UseCaseDetailsScreen />} />
+        <Route path="/test-case/:id" element={<TestCaseDetailsScreen />} />
       </Routes>
     </>
   );

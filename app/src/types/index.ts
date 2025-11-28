@@ -26,6 +26,8 @@ export type UseCase = {
 
 export type TestCase = {
   id: string;
+  title: string;
+  description: string;
   useCaseId: string;
   type: string;
   createdAt?: string;

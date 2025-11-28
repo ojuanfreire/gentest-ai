@@ -127,7 +127,7 @@ export const UseCaseDetailsScreen = () => {
 
       <main className="mx-auto max-w-5xl p-6 lg:p-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">{useCase.title}</h1>
+          <h1 className="text-3xl font-bold text-white">{useCase.name}</h1>
           <p className="mt-2 text-lg text-slate-400">{useCase.description}</p>
         </div>
 
@@ -222,7 +222,7 @@ export const UseCaseDetailsScreen = () => {
         onConfirm={handleConfirmDelete}
         isDeleting={isSubmitting}
         title="Excluir Caso de Uso"
-        message={`Tem certeza que deseja excluir "${useCase.title}"? Todos os casos de teste associados também serão perdidos.`}
+        message={`Tem certeza que deseja excluir "${useCase.name}"? Todos os casos de teste associados também serão perdidos.`}
       />
     </div>
   );

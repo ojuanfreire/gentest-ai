@@ -101,13 +101,13 @@ export const useUseCases = () => {
 
   const handleEditUseCase = async (updatedUseCase: UseCase) => {
     setIsSubmitting(true);
+    setError(null);
     try {
-      // TODO: Implementar updateUseCase no service se necessário
-      // await useCaseService.updateUseCase(updatedUseCase);
+      const savedUseCase = await useCaseService.updateUseCase(updatedUseCase);
 
       setUseCases((currentUseCases) =>
         currentUseCases.map((uc) =>
-          uc.id === updatedUseCase.id ? updatedUseCase : uc
+          uc.id === savedUseCase.id ? savedUseCase : uc
         )
       );
 
@@ -116,6 +116,8 @@ export const useUseCases = () => {
       console.error("Erro ao editar caso de uso:", err);
       if (err instanceof Error) {
         setError(err.message);
+      } else {
+        setError("Erro desconhecido ao atualizar caso de uso.");
       }
       return false;
     } finally {

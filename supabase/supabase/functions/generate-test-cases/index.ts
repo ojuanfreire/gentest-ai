@@ -38,7 +38,9 @@ Deno.serve(async (req) => {
 
       REGRAS DE SAÍDA:
       - Forneça a resposta APENAS em formato JSON, dentro de um array.
-      - O JSON deve ser um array de objetos, onde cada objeto tem: "type", "precondition", "steps" e "expected_result".
+      - O JSON deve ser um array de objetos, onde cada objeto tem: "title", "description", "type", "precondition", "steps" e "expected_result".
+      - O "title" deve ser um resumo curto e descritivo do teste.
+      - A "description" deve ser uma explicação breve do objetivo deste teste.
       - O "type" deve ser "Caminho Feliz", "Caminho Alternativo" ou "Caminho de Exceção".
       - Os valores dentro de cada atributo do objeto DEVERÃO ser escritos em português.
       - NÃO inclua \`\`\`json ou \`\`\` no início ou fim da sua resposta.

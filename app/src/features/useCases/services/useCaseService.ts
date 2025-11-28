@@ -3,11 +3,25 @@ import type { UseCase, TestCase } from "../../../types";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
 type GeneratedTestCase = {
+  title: string;
   type: string;
+  description: string;
   precondition: string;
   steps: string;
   expected_result: string;
 };
+
+const fromDbToTestCase = (dbData: any): TestCase => ({
+  id: dbData.id.toString(),
+  createdAt: dbData.created_at,
+  title: dbData.title || `Teste ${dbData.id}`,
+  description: dbData.description || "",
+  type: dbData.type,
+  precondition: dbData.precondition,
+  steps: dbData.steps,
+  expectedResult: dbData.expected_result,
+  useCaseId: dbData.use_case_id.toString(),
+});
 
 // Banco (snake_case) -> Frontend (camelCase)
 const fromDbToUseCase = (dbData: any): UseCase => {
@@ -124,31 +138,89 @@ const getTestCases = async (useCaseId: string): Promise<TestCase[]> => {
   const { data, error } = await supabase
     .from("test_cases")
     .select("*")
-    .eq("use_case_id", useCaseId);
+    .eq("use_case_id", useCaseId)
+    .order("id", { ascending: true });
 
   if (error) {
     console.error("Erro ao buscar casos de teste:", error);
     throw new Error(error.message);
   }
 
-  return data.map(
-    (dbData: any): TestCase => ({
-      id: dbData.id.toString(),
-      createdAt: dbData.created_at,
-      type: dbData.type,
-      precondition: dbData.precondition,
-      steps: dbData.steps,
-      expectedResult: dbData.expected_result,
-      useCaseId: dbData.use_case_id.toString(),
-    })
-  );
+  return data.map(fromDbToTestCase);
+};
+
+const updateTestCase = async (testCase: TestCase): Promise<TestCase> => {
+  const dbPayload = {
+    title: testCase.title,
+    description: testCase.description,
+    type: testCase.type,
+    precondition: testCase.precondition,
+    steps: testCase.steps,
+    expected_result: testCase.expectedResult,
+  };
+
+  const { data, error } = await supabase
+    .from("test_cases")
+    .update(dbPayload)
+    .eq("id", testCase.id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Erro ao atualizar caso de teste:", error);
+    throw new Error(error.message);
+  }
+
+  return fromDbToTestCase(data);
+};
+
+const deleteTestCaseById = async (testCaseId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from("test_cases")
+    .delete()
+    .eq("id", testCaseId);
+
+  if (error) {
+    console.error("Erro ao excluir caso de teste:", error);
+    throw new Error(error.message);
+  }
+  return true;
+};
+
+const updateUseCase = async (useCase: UseCase): Promise<UseCase> => {
+  // Adapter Inline: Frontend (Camel) -> Banco (Snake)
+  const dbPayload = {
+    name: useCase.name,
+    description: useCase.description,
+    actor: useCase.actor,
+    preconditions: useCase.preconditions,
+    main_flow: useCase.mainFlow,
+    alternative_flows: useCase.alternativeFlows,
+  };
+
+  const { data, error } = await supabase
+    .from("use_cases")
+    .update(dbPayload)
+    .eq("id", useCase.id)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Erro ao atualizar caso de uso:", error);
+    throw new Error(error.message);
+  }
+
+  return fromDbToUseCase(data);
 };
 
 export const useCaseService = {
   getUseCases,
   getUseCaseById,
   createUseCase,
+  updateUseCase,
   deleteUseCase,
   createTestCases,
   getTestCases,
+  updateTestCase,
+  deleteTestCaseById,
 };
