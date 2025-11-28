@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { UseCase } from "../../../types/index.ts";
+import type { UseCase } from "../../../types/index";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
 import { useCaseService } from "../services/useCaseService";
@@ -11,7 +11,6 @@ export const useUseCases = () => {
   const [useCases, setUseCases] = useState<UseCase[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Função para buscar os casos de uso
   const fetchUseCases = useCallback(async (projectId: string) => {
     setLoading(true);
     setError(null);
@@ -43,13 +42,14 @@ export const useUseCases = () => {
         setLoading(false);
       }
     },
-    []);
+    []
+  );
 
   const handleDeleteUseCase = async (useCaseId: string) => {
     setIsSubmitting(true);
     try {
       await useCaseService.deleteUseCase(useCaseId);
-      
+
       setUseCases((currentUseCases) =>
         currentUseCases.filter((uc) => uc.id !== useCaseId)
       );
@@ -94,13 +94,11 @@ export const useUseCases = () => {
     }
   };
 
-  // --------------- AINDA NÃO IMPLEMENTADO ------------------------
   const handleEditUseCase = async (updatedUseCase: UseCase) => {
-    console.log("Tentando editar o caso de uso:", updatedUseCase);
     setIsSubmitting(true);
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Simulação da chamada ao serviço
+      // await useCaseService.updateUseCase(updatedUseCase);
 
       setUseCases((currentUseCases) =>
         currentUseCases.map((uc) =>
@@ -108,10 +106,12 @@ export const useUseCases = () => {
         )
       );
 
-      console.log("Caso de uso atualizado no estado local!");
       return true;
     } catch (err: any) {
       console.error("Erro ao editar caso de uso:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      }
       return false;
     } finally {
       setIsSubmitting(false);
@@ -119,6 +119,7 @@ export const useUseCases = () => {
   };
 
   useEffect(() => {
+    // Substituir pelo id real do projeto depois
     fetchUseCases("proj-123");
   }, [fetchUseCases]);
 
@@ -127,6 +128,7 @@ export const useUseCases = () => {
     error,
     useCases,
     isSubmitting,
+    fetchUseCases,
     getUseCaseById,
     handleCreateUseCase,
     handleEditUseCase,

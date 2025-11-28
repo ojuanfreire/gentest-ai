@@ -6,15 +6,20 @@ import { useUseCases } from "../hooks/useUseCases";
 import { Button } from "../../../components/common/Button";
 import { TestCaseList } from "../components/TestCaseList";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
-import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal"; // Ajuste o caminho se necessário
+import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import type { UseCase } from "../../../types/index";
+import { Header } from "../../../components/common/Header";
 
 export const UseCaseDetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { handleDeleteUseCase, handleEditUseCase, isSubmitting, getUseCaseById } =
-    useUseCases();
+  const {
+    handleDeleteUseCase,
+    handleEditUseCase,
+    isSubmitting,
+    getUseCaseById,
+  } = useUseCases();
 
   const [useCase, setUseCase] = useState<UseCase | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,27 +30,29 @@ export const UseCaseDetailsScreen = () => {
 
   useEffect(() => {
     if (!id) {
+      console.warn("ID não fornecido, retornando...");
       navigate(-1);
       return;
     }
-    
+
     const fetchDetails = async () => {
       setIsLoading(true);
       const data = await getUseCaseById(id);
       if (data) {
         setUseCase(data);
       } else {
+        // Se a API retornar null/undefined (404), tratamos aqui
         setUseCase(null);
       }
       setIsLoading(false);
     };
-      fetchDetails();
+    fetchDetails();
   }, [id, getUseCaseById, navigate]);
 
   const handleConfirmDelete = async () => {
     if (!useCase) return;
 
-    const success = await handleDeleteUseCase(useCase.id); // Chama o hook real
+    const success = await handleDeleteUseCase(useCase.id);
     if (success) {
       setIsDeleteModalOpen(false);
       navigate(-1);
@@ -53,15 +60,20 @@ export const UseCaseDetailsScreen = () => {
   };
 
   const handleEditSubmit = async (updatedData: UseCase) => {
-    setUseCase(updatedData);
-    setIsEditModalOpen(false);
-    alert("Caso de uso editado localmente!");
+    const success = await handleEditUseCase(updatedData);
+    if (success) {
+      setUseCase(updatedData);
+      setIsEditModalOpen(false);
+    }
   };
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
-        Carregando detalhes...
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-600 border-t-blue-500"></div>
+          <p>Carregando detalhes...</p>
+        </div>
       </div>
     );
   }
@@ -82,12 +94,13 @@ export const UseCaseDetailsScreen = () => {
 
   return (
     <div className="min-h-screen w-full bg-slate-900 text-white">
-      {/* Header da Página */}
+      <Header />
+
       <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
         <div className="mx-auto max-w-5xl flex items-center justify-between">
           <Button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white"
+            className="flex items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none"
           >
             <ArrowLeft size={20} />
             Voltar aos Artefatos

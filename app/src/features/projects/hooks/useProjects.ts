@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Project } from "../../../types"; // Ajuste o caminho
+import type { Project } from "../../../types";
 
-// --- MOCK DATA ---
 const MOCK_PROJECTS: Project[] = [
   {
     id: "proj-123",
@@ -26,7 +25,6 @@ const MOCK_PROJECTS: Project[] = [
     createdAt: "2024-11-10T09:15:00Z",
   },
 ];
-// -----------------
 
 export const useProjects = () => {
   const [loading, setLoading] = useState(true);
@@ -48,7 +46,11 @@ export const useProjects = () => {
     }
   }, []);
 
-  const createProject = async (name: string, description: string) => {
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  const handleCreateProject = async (name: string, description: string) => {
     setIsSubmitting(true);
     try {
       console.log("Mock: Criando projeto...");
@@ -72,15 +74,48 @@ export const useProjects = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  const handleEditProject = async (updatedProject: Project) => {
+    setIsSubmitting(true);
+    try {
+      console.log("Mock: Editando projeto...", updatedProject);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setProjects((prev) =>
+        prev.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+      );
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    setIsSubmitting(true);
+    try {
+      console.log("Mock: Deletando projeto...", projectId);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setProjects((prev) => prev.filter((p) => p.id !== projectId));
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return {
     loading,
     error,
     projects,
     isSubmitting,
-    createProject,
+    handleCreateProject,
+    handleEditProject,
+    handleDeleteProject,
+    refreshProjects: fetchProjects, // Útil expor caso precise recarregar manualmente
   };
 };

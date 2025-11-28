@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { Eye, Edit2, Trash2 } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import { useTestCases } from "../hooks/useTestCases";
+import { EditTestCaseModal } from "../../testCases/components/EditTestCaseModal";
+import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import type { TestCase } from "../../../types";
 
 type TestCaseListProps = {
@@ -8,7 +11,28 @@ type TestCaseListProps = {
 };
 
 export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
-  const { loading, error, testCases } = useTestCases(useCaseId);
+  const {
+    loading,
+    error,
+    testCases,
+    isSubmitting,
+    handleEditTestCase,
+    handleDeleteTestCase,
+  } = useTestCases(useCaseId);
+
+  const [testToEdit, setTestToEdit] = useState<TestCase | null>(null);
+  const [testToDelete, setTestToDelete] = useState<TestCase | null>(null);
+
+  const confirmEdit = async (updatedData: TestCase) => {
+    const success = await handleEditTestCase(updatedData);
+    if (success) setTestToEdit(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!testToDelete) return;
+    const success = await handleDeleteTestCase(testToDelete.id);
+    if (success) setTestToDelete(null);
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -40,25 +64,45 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
         {testCases.map((test: TestCase) => (
           <div
             key={test.id}
-            className="flex items-center justify-between p-4 transition-colors hover:bg-slate-700/50"
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 transition-colors hover:bg-slate-700/50 gap-4"
           >
-            <div>
+            <div className="flex-1">
               <span className="text-xs font-semibold uppercase text-blue-400">
                 Teste {test.id}
               </span>
-              <p className="font-medium text-slate-200">
-                {test.expectedResult.substring(0, 50)}...
+              <h4 className="font-semibold text-white mt-1">{test.title}</h4>
+              <p className="font-medium text-slate-400 text-sm mt-1">
+                {test.expectedResult.substring(0, 60)}...
               </p>
             </div>
 
-            <button
-              className="flex-shrink-0 text-sm font-semibold text-blue-400 hover:text-blue-300 hover:underline"
-              onClick={() => {
-                alert(`Navegar para detalhes do teste: ${test.id}`); // Implementar a navegação para a tela de detalhes
-              }}
-            >
-              Visualizar Detalhes
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                className="p-2 rounded-full text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
+                title="Visualizar Detalhes"
+                onClick={() =>
+                  alert(`Navegar para detalhes do teste: ${test.id}`)
+                }
+              >
+                <Eye size={18} />
+              </button>
+
+              <button
+                className="p-2 rounded-full text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                title="Editar Caso de Teste"
+                onClick={() => setTestToEdit(test)}
+              >
+                <Edit2 size={18} />
+              </button>
+
+              <button
+                className="p-2 rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                title="Excluir Caso de Teste"
+                onClick={() => setTestToDelete(test)}
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -75,6 +119,23 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
       <div className="overflow-hidden rounded-md border border-slate-700 bg-slate-800 text-slate-200">
         {renderContent()}
       </div>
+
+      <EditTestCaseModal
+        isOpen={!!testToEdit}
+        onClose={() => setTestToEdit(null)}
+        onSubmit={confirmEdit}
+        isSubmitting={isSubmitting}
+        testCaseToEdit={testToEdit}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={!!testToDelete}
+        onClose={() => setTestToDelete(null)}
+        onConfirm={confirmDelete}
+        isDeleting={isSubmitting}
+        title="Excluir Caso de Teste"
+        message={`Tem certeza que deseja excluir o teste "${testToDelete?.title}"?`}
+      />
     </section>
   );
 };

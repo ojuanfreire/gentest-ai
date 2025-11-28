@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, FolderOpen } from "lucide-react";
 
@@ -6,21 +6,64 @@ import { useProjects } from "../hooks/useProjects";
 import { ProjectCard } from "../components/ProjectCard";
 import { Button } from "../../../components/common/Button";
 import type { Project } from "../../../types";
+import { CreateProjectModal, type ProjectFormData } from "./CreateProjectModal";
+import { EditProjectModal } from "./EditProjectModal";
+import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal"; // Importe o modal de delete
 
 export const ProjectMenuScreen = () => {
   const navigate = useNavigate();
-  const { loading, error, projects, isSubmitting, createProject } =
-    useProjects();
+
+  const {
+    loading,
+    error,
+    projects,
+    isSubmitting,
+    handleCreateProject,
+    handleEditProject,
+    handleDeleteProject,
+  } = useProjects();
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null); // Novo estado
 
   const handleProjectClick = (project: Project) => {
     navigate(`/project/${project.id}/artifacts`);
   };
 
-  const handleCreateProject = async () => {
-    const name = window.prompt("Nome do novo projeto:");
-    if (name) {
-      const desc = window.prompt("Descrição:") || "";
-      await createProject(name, desc);
+  const handleCreateProjectSubmit = async (data: ProjectFormData) => {
+    if (!handleCreateProject) return;
+    const success = await handleCreateProject(data.name, data.description);
+    if (success) setIsCreateModalOpen(false);
+  };
+
+  const handleEditClick = (project: Project) => {
+    setProjectToEdit(project);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditProjectSubmit = async (updatedData: Project) => {
+    if (!handleEditProject) return;
+    const success = await handleEditProject(updatedData);
+    if (success) {
+      setIsEditModalOpen(false);
+      setProjectToEdit(null);
+    }
+  };
+
+  const handleDeleteClick = (project: Project) => {
+    setProjectToDelete(project);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!handleDeleteProject || !projectToDelete) return;
+
+    const success = await handleDeleteProject(projectToDelete.id);
+
+    if (success) {
+      setProjectToDelete(null);
     }
   };
 
@@ -53,6 +96,8 @@ export const ProjectMenuScreen = () => {
           key={project.id}
           project={project}
           onClick={handleProjectClick}
+          onEdit={handleEditClick}
+          onDelete={handleDeleteClick}
         />
       ))}
     </div>
@@ -67,11 +112,10 @@ export const ProjectMenuScreen = () => {
         Nenhum projeto encontrado
       </h3>
       <p className="mt-2 max-w-sm text-slate-400">
-        Você ainda não possui nenhum projeto. Crie o primeiro para começar a
-        gerenciar seus casos de teste.
+        Você ainda não possui nenhum projeto. Crie o primeiro para começar.
       </p>
       <Button
-        onClick={handleCreateProject}
+        onClick={() => setIsCreateModalOpen(true)}
         className="mt-6 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-lg shadow-blue-900/20"
       >
         <Plus size={20} />
@@ -104,9 +148,9 @@ export const ProjectMenuScreen = () => {
             </h2>
 
             <Button
-              onClick={handleCreateProject}
+              onClick={() => setIsCreateModalOpen(true)}
               disabled={loading || isSubmitting}
-              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
             >
               <Plus size={20} />
               Novo Projeto
@@ -115,15 +159,36 @@ export const ProjectMenuScreen = () => {
 
           <div className="min-h-[400px]">
             {loading && renderLoading()}
-
             {!loading && error && renderError()}
-
             {!loading && !error && projects.length === 0 && renderEmptyState()}
-
             {!loading && !error && projects.length > 0 && renderProjectsList()}
           </div>
         </div>
       </main>
+
+      <CreateProjectModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateProjectSubmit}
+        isSubmitting={isSubmitting}
+      />
+
+      <EditProjectModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleEditProjectSubmit}
+        isSubmitting={isSubmitting}
+        projectToEdit={projectToEdit}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={!!projectToDelete}
+        onClose={() => setProjectToDelete(null)}
+        onConfirm={confirmDeleteProject}
+        isDeleting={isSubmitting}
+        title="Excluir Projeto"
+        message={`Tem certeza que deseja excluir o projeto "${projectToDelete?.name}"? Todos os casos de teste associados serão perdidos.`}
+      />
     </div>
   );
 };
