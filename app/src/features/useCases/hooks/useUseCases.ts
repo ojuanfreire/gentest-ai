@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { UseCase } from "../../../types/index";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
@@ -6,16 +6,18 @@ import { useCaseService } from "../services/useCaseService";
 import { aiGenerationService } from "../../ai/services/aiGenerationService";
 
 export const useUseCases = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [useCases, setUseCases] = useState<UseCase[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchUseCases = useCallback(async (projectId: string) => {
+    if (!projectId) return;
+
     setLoading(true);
     setError(null);
     try {
-      const data = await useCaseService.getUseCases();
+      const data = await useCaseService.getUseCases(projectId);
       setUseCases(data);
     } catch (err) {
       if (err instanceof Error) {
@@ -35,8 +37,10 @@ export const useUseCases = () => {
       try {
         const data = await useCaseService.getUseCaseById(id);
         return data;
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar caso de uso.");
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || "Erro ao buscar caso de uso.");
+        }
         return undefined;
       } finally {
         setLoading(false);
@@ -65,12 +69,13 @@ export const useUseCases = () => {
     }
   };
 
-  const handleCreateUseCase = async (data: UseCaseFormData) => {
+  const handleCreateUseCase = async (data: UseCaseFormData, projectId: string) => {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const newUseCase = await useCaseService.createUseCase(data);
+      // Passando projectId para o serviço
+      const newUseCase = await useCaseService.createUseCase(data, projectId);
 
       // Enviando caso de uso criado para o serviço de IA
       const generatedTests = await aiGenerationService.generateTestCases(
@@ -97,7 +102,7 @@ export const useUseCases = () => {
   const handleEditUseCase = async (updatedUseCase: UseCase) => {
     setIsSubmitting(true);
     try {
-      // Simulação da chamada ao serviço
+      // TODO: Implementar updateUseCase no service se necessário
       // await useCaseService.updateUseCase(updatedUseCase);
 
       setUseCases((currentUseCases) =>
@@ -107,7 +112,7 @@ export const useUseCases = () => {
       );
 
       return true;
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erro ao editar caso de uso:", err);
       if (err instanceof Error) {
         setError(err.message);
@@ -117,11 +122,6 @@ export const useUseCases = () => {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    // Substituir pelo id real do projeto depois
-    fetchUseCases("proj-123");
-  }, [fetchUseCases]);
 
   return {
     loading,

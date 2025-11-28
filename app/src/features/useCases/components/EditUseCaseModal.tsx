@@ -25,7 +25,7 @@ export const EditUseCaseModal = ({
   isSubmitting = false,
   useCaseToEdit,
 }: EditUseCaseModalProps) => {
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [actor, setActor] = useState("");
   const [preconditions, setPreconditions] = useState("");
@@ -34,14 +34,14 @@ export const EditUseCaseModal = ({
 
   useEffect(() => {
     if (isOpen && useCaseToEdit) {
-      setTitle(useCaseToEdit.title);
+      setName(useCaseToEdit.name);
       setDescription(useCaseToEdit.description);
       setActor(useCaseToEdit.actor);
       setPreconditions(useCaseToEdit.preconditions);
       setMainFlow(useCaseToEdit.mainFlow);
       setAlternativeFlows(useCaseToEdit.alternativeFlows);
     } else if (!isOpen) {
-      setTitle("");
+      setName("");
       setDescription("");
       setActor("");
       setPreconditions("");
@@ -56,7 +56,7 @@ export const EditUseCaseModal = ({
 
     const updatedUseCase: UseCase = {
       ...useCaseToEdit,
-      title,
+      name,
       description,
       actor,
       preconditions,
@@ -101,9 +101,9 @@ export const EditUseCaseModal = ({
                   Nome
                 </label>
                 <TextArea
-                  id="edit-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  id="edit-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Exemplo de nome"
                   required
                   rows={1}

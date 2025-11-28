@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Workflow } from "lucide-react";
 
 import { useUseCases } from "../hooks/useUseCases";
@@ -13,6 +13,8 @@ import type { UseCase } from "../../../types/index";
 import { Header } from "../../../components/common/Header";
 
 export const ProjectArtifactsScreen = () => {
+  const { projectId } = useParams<{ projectId: string }>();
+
   const {
     loading,
     error,
@@ -34,13 +36,16 @@ export const ProjectArtifactsScreen = () => {
   const [selectedUseCase, setSelectedUseCase] = useState<UseCase | null>(null);
   const [useCaseToDelete, setUseCaseToDelete] = useState<UseCase | null>(null);
 
-  /*
   useEffect(() => {
-    fetchUseCases("proj-123");
-  }, [fetchUseCases]); */
+    if (projectId) {
+      fetchUseCases(projectId);
+    }
+  }, [projectId, fetchUseCases]);
 
   const handleCreateFormSubmit = async (data: UseCaseFormData) => {
-    const success = await handleCreateUseCase(data);
+    if (!projectId) return;
+
+    const success = await handleCreateUseCase(data, projectId);
     if (success) setIsCreateModalOpen(false);
   };
 
@@ -181,7 +186,7 @@ export const ProjectArtifactsScreen = () => {
         onConfirm={handleConfirmDelete}
         isDeleting={isSubmitting}
         title="Excluir Caso de Uso"
-        message={`Tem certeza que deseja excluir "${useCaseToDelete?.title}"? Esta ação não pode ser desfeita e todos os testes associados serão removidos.`}
+        message={`Tem certeza que deseja excluir "${useCaseToDelete?.name}"? Esta ação não pode ser desfeita e todos os testes associados serão removidos.`}
       />
     </div>
   );

@@ -62,7 +62,7 @@ export const UseCaseCard = ({
 
           <div className="flex flex-col justify-center">
             <h3 className="text-lg font-semibold text-white group-hover:text-emerald-200 transition-colors">
-              {useCase.title}
+              {useCase.name}
             </h3>
           </div>
         </div>

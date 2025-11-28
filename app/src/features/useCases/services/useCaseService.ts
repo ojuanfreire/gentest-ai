@@ -9,12 +9,13 @@ type GeneratedTestCase = {
   expected_result: string;
 };
 
+// Banco (snake_case) -> Frontend (camelCase)
 const fromDbToUseCase = (dbData: any): UseCase => {
   return {
-    id: dbData.id,
-    title: dbData.title,
+    id: dbData.id.toString(),
+    name: dbData.name,
     description: dbData.description,
-    projectId: dbData.project_id,
+    projectId: dbData.project_id.toString(),
     createdAt: dbData.created_at,
     actor: dbData.actor,
     preconditions: dbData.preconditions,
@@ -23,9 +24,11 @@ const fromDbToUseCase = (dbData: any): UseCase => {
   };
 };
 
-const fromUseCaseToDb = (formData: UseCaseFormData) => {
+// Frontend (camelCase) -> Banco (snake_case)
+const fromUseCaseToDb = (formData: UseCaseFormData, projectId: string) => {
   return {
-    title: formData.title,
+    project_id: projectId,
+    name: formData.name,
     description: formData.description,
     actor: formData.actor,
     preconditions: formData.preconditions,
@@ -34,8 +37,12 @@ const fromUseCaseToDb = (formData: UseCaseFormData) => {
   };
 };
 
-const getUseCases = async (): Promise<UseCase[]> => {
-  const { data, error } = await supabase.from("use_cases").select("*");
+const getUseCases = async (projectId: string): Promise<UseCase[]> => {
+  const { data, error } = await supabase
+    .from("use_cases")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Erro ao buscar casos de uso:", error);
@@ -60,12 +67,15 @@ const getUseCaseById = async (id: string): Promise<UseCase> => {
   return fromDbToUseCase(data);
 };
 
-const createUseCase = async (formData: UseCaseFormData): Promise<UseCase> => {
-  const dbPayload = fromUseCaseToDb(formData);
+const createUseCase = async (
+  formData: UseCaseFormData,
+  projectId: string
+): Promise<UseCase> => {
+  const dbPayload = fromUseCaseToDb(formData, projectId);
 
   const { data, error } = await supabase
     .from("use_cases")
-    .insert(dbPayload) // 2. Insere os dados traduzidos
+    .insert(dbPayload)
     .select("*")
     .single();
 
@@ -78,7 +88,10 @@ const createUseCase = async (formData: UseCaseFormData): Promise<UseCase> => {
 };
 
 // Função para salvar todos os casos de teste gerados
-const createTestCases = async (tests: GeneratedTestCase[], useCaseId: string) => {
+const createTestCases = async (
+  tests: GeneratedTestCase[],
+  useCaseId: string
+) => {
   const testsToInsert = tests.map((test) => ({
     ...test,
     use_case_id: useCaseId,
@@ -117,17 +130,18 @@ const getTestCases = async (useCaseId: string): Promise<TestCase[]> => {
     console.error("Erro ao buscar casos de teste:", error);
     throw new Error(error.message);
   }
-  
-  // Precisamos traduzir a saída de 'test_cases' também
-  return data.map((dbData: any): TestCase => ({
-    id: dbData.id,
-    createdAt: dbData.created_at,
-    type: dbData.type,
-    precondition: dbData.precondition,
-    steps: dbData.steps,
-    expectedResult: dbData.expected_result,
-    useCaseId: dbData.use_case_id,
-  }));
+
+  return data.map(
+    (dbData: any): TestCase => ({
+      id: dbData.id.toString(),
+      createdAt: dbData.created_at,
+      type: dbData.type,
+      precondition: dbData.precondition,
+      steps: dbData.steps,
+      expectedResult: dbData.expected_result,
+      useCaseId: dbData.use_case_id.toString(),
+    })
+  );
 };
 
 export const useCaseService = {

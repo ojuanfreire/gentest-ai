@@ -8,7 +8,7 @@ import { Button } from "../../../components/common/Button";
 import type { Project } from "../../../types";
 import { CreateProjectModal, type ProjectFormData } from "./CreateProjectModal";
 import { EditProjectModal } from "./EditProjectModal";
-import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal"; // Importe o modal de delete
+import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 
 export const ProjectMenuScreen = () => {
   const navigate = useNavigate();
@@ -17,25 +17,28 @@ export const ProjectMenuScreen = () => {
     loading,
     error,
     projects,
-    isSubmitting,
-    handleCreateProject,
-    handleEditProject,
-    handleDeleteProject,
+    addProject,
+    editProject,
+    removeProject,
   } = useProjects();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
-  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null); // Novo estado
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   const handleProjectClick = (project: Project) => {
     navigate(`/project/${project.id}/artifacts`);
   };
 
   const handleCreateProjectSubmit = async (data: ProjectFormData) => {
-    if (!handleCreateProject) return;
-    const success = await handleCreateProject(data.name, data.description);
+    setIsSubmitting(true);
+    const success = await addProject(data.name, data.description);
+    setIsSubmitting(false);
+
     if (success) setIsCreateModalOpen(false);
   };
 
@@ -45,8 +48,13 @@ export const ProjectMenuScreen = () => {
   };
 
   const handleEditProjectSubmit = async (updatedData: Project) => {
-    if (!handleEditProject) return;
-    const success = await handleEditProject(updatedData);
+    setIsSubmitting(true);
+    const success = await editProject(updatedData.id, {
+      name: updatedData.name,
+      description: updatedData.description,
+    });
+    setIsSubmitting(false);
+
     if (success) {
       setIsEditModalOpen(false);
       setProjectToEdit(null);
@@ -58,9 +66,11 @@ export const ProjectMenuScreen = () => {
   };
 
   const confirmDeleteProject = async () => {
-    if (!handleDeleteProject || !projectToDelete) return;
+    if (!projectToDelete) return;
 
-    const success = await handleDeleteProject(projectToDelete.id);
+    setIsSubmitting(true);
+    const success = await removeProject(projectToDelete.id);
+    setIsSubmitting(false);
 
     if (success) {
       setProjectToDelete(null);
