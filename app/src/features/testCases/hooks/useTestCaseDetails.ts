@@ -38,10 +38,8 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
     setError(null);
     try {
       console.log(`Mock: Buscando detalhes do teste ${testCaseId}`);
-      // Simula delay de rede
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Para poder testar está sempre retornando o mock, independente do ID
       setTestCase(MOCK_TEST_CASE);
       setSkeletons(MOCK_SKELETONS);
     } catch (err: any) {
@@ -79,6 +77,17 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
     }
   };
 
+  const handleEditTestCase = async (updatedData: TestCase) => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setTestCase(updatedData);
+      return true;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDeleteSkeleton = async (skeletonId: string) => {
     setSkeletons((prev) => prev.filter((sk) => sk.id !== skeletonId));
   };
@@ -95,6 +104,7 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
     isSubmitting,
     generateSkeleton,
     handleDeleteTestCase,
+    handleEditTestCase,
     handleDeleteSkeleton,
   };
 };
