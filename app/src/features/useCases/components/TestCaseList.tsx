@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, Edit2, Trash2 } from "lucide-react";
+import { Eye, Edit2, Trash, FileText } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import { useTestCases } from "../hooks/useTestCases";
 import { EditTestCaseModal } from "../../testCases/components/EditTestCaseModal";
@@ -39,7 +39,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
   const renderContent = () => {
     if (loading) {
       return (
-        <div className="p-5 text-center text-sm text-slate-400">
+        <div className="rounded-lg border border-dashed border-slate-700 bg-slate-800/30 p-8 text-center text-sm text-slate-400">
           Carregando casos de teste...
         </div>
       );
@@ -47,7 +47,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
 
     if (error) {
       return (
-        <div className="p-5 text-center text-sm text-red-400">
+        <div className="rounded-lg border border-red-900/50 bg-red-900/10 p-5 text-center text-sm text-red-400">
           Erro ao carregar testes: {error}
         </div>
       );
@@ -55,54 +55,53 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
 
     if (testCases.length === 0) {
       return (
-        <div className="p-5 text-center text-sm text-slate-400">
+        <div className="rounded-lg border border-dashed border-slate-700 bg-slate-800/30 p-8 text-center text-slate-400">
           Nenhum caso de teste gerado para este Caso de Uso.
         </div>
       );
     }
 
     return (
-      <div className="divide-y divide-slate-700/50">
+      <div className="space-y-3">
         {testCases.map((test: TestCase) => (
           <div
             key={test.id}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 transition-colors hover:bg-slate-700/50 gap-4"
+            className="flex flex-col items-start justify-between gap-4 rounded-lg border border-slate-700 bg-slate-800 p-4 sm:flex-row sm:items-center"
           >
-            <div className="flex-1">
-              <span className="text-xs font-semibold uppercase text-blue-400">
-                {test.type}
-              </span>
-              <h4 className="font-bold text-slate-200 text-md mt-1">
-                {test.title}
-              </h4>
-              <p className="font-medium text-slate-400 text-sm mt-1 line-clamp-2">
-                {test.description}
-              </p>
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-slate-700 text-blue-400">
+                <FileText size={20} />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-medium text-slate-200 truncate">
+                  {test.title}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {test.type || "Funcional"}
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex w-full justify-end gap-3 sm:w-auto">
               <button
-                className="p-2 rounded-full text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
-                title="Visualizar Detalhes"
-                onClick={() => navigate(`/test-case/${test.id}`)} 
+                onClick={() => navigate(`/test-case/${test.id}`)}
+                className="flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors"
               >
-                <Eye size={18} />
+                <Eye size={16} /> Visualizar Detalhes
               </button>
 
               <button
-                className="p-2 rounded-full text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                title="Editar Caso de Teste"
                 onClick={() => setTestToEdit(test)}
+                className="flex items-center gap-1.5 text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline transition-colors ml-2"
               >
-                <Edit2 size={18} />
+                <Edit2 size={16} /> Editar
               </button>
 
               <button
-                className="p-2 rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                title="Excluir Caso de Teste"
                 onClick={() => setTestToDelete(test)}
+                className="flex items-center gap-1.5 text-sm font-medium text-red-500 hover:text-red-400 hover:underline transition-colors ml-2"
               >
-                <Trash2 size={18} />
+                <Trash size={16} /> Deletar
               </button>
             </div>
           </div>
@@ -113,14 +112,13 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
 
   return (
     <section className="mt-8">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <h3 className="text-xl font-semibold text-white">
           Casos de Teste Gerados
         </h3>
       </div>
-      <div className="overflow-hidden rounded-md border border-slate-700 bg-slate-800 text-slate-200">
-        {renderContent()}
-      </div>
+
+      {renderContent()}
 
       <EditTestCaseModal
         isOpen={!!testToEdit}
@@ -136,7 +134,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
         onConfirm={confirmDelete}
         isDeleting={isSubmitting}
         title="Excluir Caso de Teste"
-        message={`Tem certeza que deseja excluir o teste ${testToDelete?.title}?`}
+        message={`Tem certeza que deseja excluir o teste "${testToDelete?.title}"?`}
       />
     </section>
   );

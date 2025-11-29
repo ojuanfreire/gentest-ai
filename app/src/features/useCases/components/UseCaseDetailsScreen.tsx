@@ -24,7 +24,6 @@ export const UseCaseDetailsScreen = () => {
   const [useCase, setUseCase] = useState<UseCase | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Estados dos Modais
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -41,7 +40,6 @@ export const UseCaseDetailsScreen = () => {
       if (data) {
         setUseCase(data);
       } else {
-        // Se a API retornar null/undefined (404), tratamos aqui
         setUseCase(null);
       }
       setIsLoading(false);
@@ -127,84 +125,76 @@ export const UseCaseDetailsScreen = () => {
 
       <main className="mx-auto max-w-5xl p-6 lg:p-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">{useCase.name}</h1>
-          <p className="mt-2 text-lg text-slate-400">{useCase.description}</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-white">{useCase.name}</h1>
+          </div>
+          <p className="mt-2 text-sm text-slate-400">ID: {useCase.id}</p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          <div className="space-y-6 md:col-span-1">
-            <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
-                Detalhes
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <span className="block text-xs text-slate-400">
-                    Ator Principal
-                  </span>
-                  <span className="font-medium text-slate-200">
-                    {useCase.actor}
-                  </span>
+        <div className="grid gap-8 md:grid-cols-1">
+          <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
+              Informações do Caso de Uso
+            </h3>
+
+            <div className="min-h-[60px] w-full rounded-md border border-slate-600 bg-slate-800 p-4 text-slate-200 whitespace-pre-wrap">
+              {useCase.description || "Sem descrição."}
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <h4 className="mb-2 text-xs font-bold uppercase text-slate-500">
+                  Ator Principal
+                </h4>
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-sm text-slate-300">
+                  {useCase.actor}
                 </div>
-                <div>
-                  <span className="block text-xs text-slate-400">
-                    Data de Criação
-                  </span>
-                  <span className="font-medium text-slate-200">
-                    {new Date(
-                      useCase.createdAt || Date.now()
-                    ).toLocaleDateString()}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-xs text-slate-400">
-                    ID do Projeto
-                  </span>
-                  <span className="font-medium text-slate-200">
-                    {useCase.projectId}
-                  </span>
+              </div>
+
+              <div>
+                <h4 className="mb-2 text-xs font-bold uppercase text-slate-500">
+                  Criado em
+                </h4>
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-sm text-slate-300">
+                  {new Date(
+                    useCase.createdAt || Date.now()
+                  ).toLocaleDateString()}
                 </div>
               </div>
             </div>
 
-            <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            <div className="mt-6">
+              <h4 className="mb-2 text-xs font-bold uppercase text-slate-500">
                 Pré-condições
-              </h3>
-              <p className="text-sm text-slate-300">{useCase.preconditions}</p>
+              </h4>
+              <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap">
+                {useCase.preconditions || "Nenhuma pré-condição definida."}
+              </div>
+            </div>
+
+            <div className="mt-6 mb-4 pb-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <h4 className="mb-2 text-xs font-bold uppercase text-blue-400">
+                  Fluxo Principal
+                </h4>
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap h-full">
+                  {useCase.mainFlow}
+                </div>
+              </div>
+              <div>
+                <h4 className="mb-2 text-xs font-bold uppercase text-yellow-500">
+                  Fluxos Alternativos
+                </h4>
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap h-full">
+                  {useCase.alternativeFlows || "Nenhum fluxo alternativo."}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-8">
-            <section>
-              <h3 className="mb-4 text-xl font-semibold text-white">Fluxos</h3>
-              <div className="space-y-4">
-                <div className="rounded-md border border-slate-700 bg-slate-800 p-5">
-                  <h4 className="mb-2 font-medium text-blue-400">
-                    Fluxo Principal
-                  </h4>
-                  <pre className="whitespace-pre-wrap font-sans text-sm text-slate-300">
-                    {useCase.mainFlow}
-                  </pre>
-                </div>
-
-                {useCase.alternativeFlows && (
-                  <div className="rounded-md border border-slate-700 bg-slate-800 p-5">
-                    <h4 className="mb-2 font-medium text-yellow-500">
-                      Fluxos Alternativos
-                    </h4>
-                    <pre className="whitespace-pre-wrap font-sans text-sm text-slate-300">
-                      {useCase.alternativeFlows}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section>
-              <TestCaseList useCaseId={useCase.id} />
-            </section>
-          </div>
+          <section>
+            <TestCaseList useCaseId={useCase.id} />
+          </section>
         </div>
       </main>
 
