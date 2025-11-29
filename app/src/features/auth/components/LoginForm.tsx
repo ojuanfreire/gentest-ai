@@ -17,7 +17,7 @@ export const LoginForm = () => {
 
     try {
       await handleSignIn(email, password);
-      navigate("/artifacts");
+      navigate("/projects");
     } catch (error) {
       console.log(error);
     }

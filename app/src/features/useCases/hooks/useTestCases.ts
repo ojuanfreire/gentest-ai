@@ -16,8 +16,10 @@ export const useTestCases = (useCaseId: string | number) => {
     try {
       const data = await useCaseService.getTestCases(String(useCaseId));
       setTestCases(data);
-    } catch (err: any) {
-      setError(err.message || "Erro ao buscar casos de teste.");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Erro ao buscar casos de teste.");
+      }
     } finally {
       setLoading(false);
     }
@@ -26,16 +28,17 @@ export const useTestCases = (useCaseId: string | number) => {
   const handleEditTestCase = async (updatedTest: TestCase) => {
     setIsSubmitting(true);
     try {
-      // Simulação da chamada ao serviço
-      // await useCaseService.updateTestCase(updatedTest);
+      const savedTest = await useCaseService.updateTestCase(updatedTest);
 
       setTestCases((prev) =>
-        prev.map((t) => (t.id === updatedTest.id ? updatedTest : t))
+        prev.map((t) => (t.id === savedTest.id ? savedTest : t))
       );
       return true;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError(err.message || "Erro ao editar caso de teste.");
+      if (err instanceof Error) {
+        setError(err.message || "Erro ao editar caso de teste.");
+      }
       return false;
     } finally {
       setIsSubmitting(false);
@@ -45,14 +48,15 @@ export const useTestCases = (useCaseId: string | number) => {
   const handleDeleteTestCase = async (testCaseId: string) => {
     setIsSubmitting(true);
     try {
-      // Simulação da chamada ao serviço
-      // await useCaseService.deleteTestCase(testCaseId);
+      await useCaseService.deleteTestCaseById(testCaseId);
 
       setTestCases((prev) => prev.filter((t) => t.id !== testCaseId));
       return true;
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError(err.message || "Erro ao excluir caso de teste.");
+      if (err instanceof Error) {
+        setError(err.message || "Erro ao excluir caso de teste.");
+      }
       return false;
     } finally {
       setIsSubmitting(false);

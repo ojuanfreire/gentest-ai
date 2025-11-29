@@ -20,7 +20,7 @@ export const CreateUseCaseModal = ({
   onSubmit,
   isSubmitting = false,
 }: CreateUseCaseModalProps) => {
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [actor, setActor] = useState("");
   const [preconditions, setPreconditions] = useState("");
@@ -29,7 +29,7 @@ export const CreateUseCaseModal = ({
 
   useEffect(() => {
     if (!isOpen) {
-      setTitle("");
+      setName("");
       setDescription("");
       setActor("");
       setPreconditions("");
@@ -41,7 +41,7 @@ export const CreateUseCaseModal = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      title,
+      name,
       description,
       actor,
       preconditions,
@@ -83,9 +83,9 @@ export const CreateUseCaseModal = ({
                   Nome (Título)
                 </label>
                 <TextArea
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: Efetuar Login"
                   required
                   rows={1}

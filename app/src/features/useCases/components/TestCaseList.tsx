@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Eye, Edit2, Trash2 } from "lucide-react";
 import { Button } from "../../../components/common/Button";
 import { useTestCases } from "../hooks/useTestCases";
@@ -11,6 +12,7 @@ type TestCaseListProps = {
 };
 
 export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
+  const navigate = useNavigate();
   const {
     loading,
     error,
@@ -68,11 +70,13 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
           >
             <div className="flex-1">
               <span className="text-xs font-semibold uppercase text-blue-400">
-                Teste {test.id}
+                {test.type}
               </span>
-              <h4 className="font-semibold text-white mt-1">{test.title}</h4>
-              <p className="font-medium text-slate-400 text-sm mt-1">
-                {test.expectedResult.substring(0, 60)}...
+              <h4 className="font-bold text-slate-200 text-md mt-1">
+                {test.title}
+              </h4>
+              <p className="font-medium text-slate-400 text-sm mt-1 line-clamp-2">
+                {test.description}
               </p>
             </div>
 
@@ -80,9 +84,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
               <button
                 className="p-2 rounded-full text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
                 title="Visualizar Detalhes"
-                onClick={() =>
-                  alert(`Navegar para detalhes do teste: ${test.id}`)
-                }
+                onClick={() => navigate(`/test-case/${test.id}`)} 
               >
                 <Eye size={18} />
               </button>
@@ -134,7 +136,7 @@ export const TestCaseList = ({ useCaseId }: TestCaseListProps) => {
         onConfirm={confirmDelete}
         isDeleting={isSubmitting}
         title="Excluir Caso de Teste"
-        message={`Tem certeza que deseja excluir o teste "${testToDelete?.title}"?`}
+        message={`Tem certeza que deseja excluir o teste ${testToDelete?.title}?`}
       />
     </section>
   );
