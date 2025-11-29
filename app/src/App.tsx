@@ -8,6 +8,7 @@ import { ProjectArtifactsScreen } from "./features/useCases/components/ProjectAr
 import { UseCaseDetailsScreen } from "./features/useCases/components/UseCaseDetailsScreen";
 import { TestCaseDetailsScreen } from "./features/testCases/components/TestCaseDetailsScreen";
 import { ProjectMenuScreen } from "./features/projects/components/ProjectMenuScreen";
+import { CodeSkeletonScreen } from "./features/testCases/components/CodeSkeletonScreen";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/project/:projectId/artifacts" element={<ProjectArtifactsScreen />} />
         <Route path="/use-case/:id" element={<UseCaseDetailsScreen />} />
         <Route path="/test-case/:id" element={<TestCaseDetailsScreen />} />
+        <Route path="/skeleton/:id" element={<CodeSkeletonScreen />} />
       </Routes>
     </>
   );

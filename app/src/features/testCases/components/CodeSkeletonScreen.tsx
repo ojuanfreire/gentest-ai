@@ -26,8 +26,8 @@ export const CodeSkeletonScreen = () => {
   };
 
   const handleCopyCode = () => {
-    if (skeleton?.code) {
-      navigator.clipboard.writeText(skeleton.code);
+    if (skeleton?.generatedCode) {
+      navigator.clipboard.writeText(skeleton.generatedCode);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     }
@@ -116,7 +116,7 @@ export const CodeSkeletonScreen = () => {
             <div className="relative">
               <textarea
                 readOnly
-                value={skeleton.code}
+                value={skeleton.generatedCode}
                 className="h-[500px] w-full resize-none bg-slate-900 p-4 font-mono text-sm text-slate-300 focus:outline-none selection:bg-blue-500/30 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
                 spellCheck={false}
               />

@@ -74,6 +74,10 @@ Deno.serve(async (req) => {
     }
 
     const geminiData = await geminiResponse.json();
+
+    if (!geminiData.candidates || geminiData.candidates.length === 0) {
+      return createErrorResponse("Nenhuma resposta gerada pelo Gemini.", 500);
+    }
     
     // Extraindo a resposta do Gemini
     let jsonText = geminiData.candidates[0].content.parts[0].text;
@@ -87,8 +91,8 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     if (error instanceof SyntaxError) {
-      console.error('Erro de sintaxe ao analisar JSON:', error.message)
-      return createErrorResponse('Resposta JSON inválida do Gemini', 500)
+      console.error('Erro de sintaxe ao analisar JSON:', error.message);
+      return createErrorResponse('Resposta JSON inválida do Gemini', 500);
     }
 
     return createErrorResponse('Erro interno do servidor', 500);

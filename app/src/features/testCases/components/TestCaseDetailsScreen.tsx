@@ -60,8 +60,7 @@ export const TestCaseDetailsScreen = () => {
   };
 
   const handleViewSkeleton = (skeletonId: string) => {
-    console.log("Visualizar esqueleto:", skeletonId);
-    alert("Funcionalidade de visualizar código a implementar.");
+    navigate(`/skeleton/${skeletonId}`);
   };
 
   if (loading) {
