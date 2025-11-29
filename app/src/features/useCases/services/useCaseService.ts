@@ -149,6 +149,21 @@ const getTestCases = async (useCaseId: string): Promise<TestCase[]> => {
   return data.map(fromDbToTestCase);
 };
 
+const getTestCaseById = async (id: string): Promise<TestCase> => {
+  const { data, error } = await supabase
+    .from("test_cases")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Erro ao buscar caso de teste por ID:", error);
+    throw new Error(error.message);
+  }
+
+  return fromDbToTestCase(data);
+};
+
 const updateTestCase = async (testCase: TestCase): Promise<TestCase> => {
   const dbPayload = {
     title: testCase.title,
@@ -188,7 +203,6 @@ const deleteTestCaseById = async (testCaseId: string): Promise<boolean> => {
 };
 
 const updateUseCase = async (useCase: UseCase): Promise<UseCase> => {
-  // Adapter Inline: Frontend (Camel) -> Banco (Snake)
   const dbPayload = {
     name: useCase.name,
     description: useCase.description,
@@ -221,6 +235,7 @@ export const useCaseService = {
   deleteUseCase,
   createTestCases,
   getTestCases,
+  getTestCaseById,
   updateTestCase,
   deleteTestCaseById,
 };
