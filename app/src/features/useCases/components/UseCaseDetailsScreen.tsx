@@ -91,31 +91,31 @@ export const UseCaseDetailsScreen = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-slate-900 text-white">
+    <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
       <Header />
 
       <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
-        <div className="mx-auto max-w-5xl flex items-center justify-between">
+        <div className="mx-auto max-w-5xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none"
+            className="flex items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none w-fit"
           >
             <ArrowLeft size={20} />
             Voltar aos Artefatos
           </Button>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
               onClick={() => setIsDeleteModalOpen(true)}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 transition-colors shadow-sm border-none"
+              className="flex-1 sm:flex-none justify-center flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700 transition-colors shadow-sm border-none"
             >
               <Trash2 size={18} /> Excluir
             </Button>
 
             <Button
               onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 transition-colors shadow-sm border-none"
+              className="flex-1 sm:flex-none justify-center flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 transition-colors shadow-sm border-none"
             >
               <Edit2 size={18} /> Editar
             </Button>
@@ -123,21 +123,25 @@ export const UseCaseDetailsScreen = () => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl p-6 lg:p-10">
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-white">{useCase.name}</h1>
+      <main className="mx-auto w-full max-w-5xl px-6 py-8 lg:p-10">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white break-words">
+              {useCase.name}
+            </h1>
           </div>
-          <p className="mt-2 text-sm text-slate-400">ID: {useCase.id}</p>
+          <p className="mt-2 text-xs sm:text-sm text-slate-400 break-all">
+            ID: {useCase.id}
+          </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-1">
-          <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-6">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1">
+          <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-4 sm:p-6 shadow-sm">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
               Informações do Caso de Uso
             </h3>
 
-            <div className="min-h-[60px] w-full rounded-md border border-slate-600 bg-slate-800 p-4 text-slate-200 whitespace-pre-wrap">
+            <div className="min-h-[60px] w-full rounded-md border border-slate-600 bg-slate-900/50 p-4 text-slate-200 whitespace-pre-wrap break-words text-sm sm:text-base">
               {useCase.description || "Sem descrição."}
             </div>
 
@@ -146,7 +150,7 @@ export const UseCaseDetailsScreen = () => {
                 <h4 className="mb-2 text-xs font-bold uppercase text-slate-500">
                   Ator Principal
                 </h4>
-                <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-sm text-slate-300">
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-3 text-sm text-slate-300 break-words">
                   {useCase.actor}
                 </div>
               </div>
@@ -167,7 +171,7 @@ export const UseCaseDetailsScreen = () => {
               <h4 className="mb-2 text-xs font-bold uppercase text-slate-500">
                 Pré-condições
               </h4>
-              <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap">
+              <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap break-words">
                 {useCase.preconditions || "Nenhuma pré-condição definida."}
               </div>
             </div>
@@ -177,7 +181,7 @@ export const UseCaseDetailsScreen = () => {
                 <h4 className="mb-2 text-xs font-bold uppercase text-blue-400">
                   Fluxo Principal
                 </h4>
-                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap h-full">
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap break-words h-full">
                   {useCase.mainFlow}
                 </div>
               </div>
@@ -185,7 +189,7 @@ export const UseCaseDetailsScreen = () => {
                 <h4 className="mb-2 text-xs font-bold uppercase text-yellow-500">
                   Fluxos Alternativos
                 </h4>
-                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap h-full">
+                <div className="rounded-md border border-slate-700 bg-slate-800 p-4 text-sm text-slate-300 whitespace-pre-wrap break-words h-full">
                   {useCase.alternativeFlows || "Nenhum fluxo alternativo."}
                 </div>
               </div>
