@@ -9,18 +9,13 @@ import type { Project } from "../../../types";
 import { CreateProjectModal, type ProjectFormData } from "./CreateProjectModal";
 import { EditProjectModal } from "./EditProjectModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
+import { Header } from "../../../components/common/Header";
 
 export const ProjectMenuScreen = () => {
   const navigate = useNavigate();
 
-  const {
-    loading,
-    error,
-    projects,
-    addProject,
-    editProject,
-    removeProject,
-  } = useProjects();
+  const { loading, error, projects, addProject, editProject, removeProject } =
+    useProjects();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -135,7 +130,9 @@ export const ProjectMenuScreen = () => {
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-slate-900 text-white">
+    <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
+      <Header />
+
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center justify-center text-center">

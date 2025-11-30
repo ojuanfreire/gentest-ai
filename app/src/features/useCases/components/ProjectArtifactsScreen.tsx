@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus, Workflow } from "lucide-react";
+import { Plus, Workflow, ArrowLeft } from "lucide-react";
 
 import { useUseCases } from "../hooks/useUseCases";
 import { UseCaseCard } from "../components/UseCaseCard";
@@ -28,11 +28,9 @@ export const ProjectArtifactsScreen = () => {
 
   const navigate = useNavigate();
 
-  // Estados de Modais
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Estados de Seleção
   const [selectedUseCase, setSelectedUseCase] = useState<UseCase | null>(null);
   const [useCaseToDelete, setUseCaseToDelete] = useState<UseCase | null>(null);
 
@@ -129,6 +127,18 @@ export const ProjectArtifactsScreen = () => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
       <Header />
+
+      <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
+        <div className="mx-auto max-w-7xl flex items-center">
+          <Button
+            onClick={() => navigate(-1)}
+            className="flex w-fit items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none"
+          >
+            <ArrowLeft size={20} />
+            Voltar aos Projetos
+          </Button>
+        </div>
+      </header>
 
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">
