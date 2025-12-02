@@ -35,7 +35,7 @@ jobs:
       run: npm run build
 
     # --- FASE 3: TESTES (Bloqueante) ---
-    - name: 🧪 Rodar Testes Unitários (TDD)
+    - name: 🧪 Rodar Testes
       working-directory: ./app
       run: npm test -- --run
 
@@ -62,18 +62,24 @@ jobs:
         fi
 
     # --- FASE 5: NOTIFICAÇÃO (Opcional) ---
-    - name: 📝 Criar Issue de Alerta (Code Smell)
+    - name: 📝 Criar Issues de Code Smell (Sem parar o Deploy)
       if: steps.jscpd.outputs.has_smells == 'true'
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
+          
           try {
+            // 1. Ler o relatório JSON
             const reportContent = fs.readFileSync('./app/report/jscpd-report.json', 'utf8');
             const report = JSON.parse(reportContent);
-            const duplicates = report.duplicates.slice(0, 10); // Pega as 10 primeiras
+            
+            // Limita a 10 para não estourar limites da API em casos extremos
+            const duplicates = report.duplicates.slice(0, 10);
+            
+            console.log(`🔍 Encontradas ${report.duplicates.length} duplicações.`);
 
-            // Busca issues já abertas para evitar duplicidade de spam
+            // 2. Buscar issues ABERTAS de smell para evitar duplicatas
             const existingIssues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -82,21 +88,48 @@ jobs:
             });
 
             for (const dupe of duplicates) {
-              const title = `⚠️ Aviso de Qualidade: Duplicação em ${dupe.firstFile.name}`;
+              const fileA = dupe.firstFile;
+              const fileB = dupe.secondFile;
               
-              // Se já existe, pula
-              if (existingIssues.data.find(i => i.title === title)) continue;
+              // Título único para identificação
+              const title = `🚨 Code Smell: Duplicação em ${fileA.name} e ${fileB.name}`;
+              
+              // Se já existe, pula e avisa no log
+              if (existingIssues.data.find(i => i.title === title)) {
+                console.log(`⚠️ Issue já existe: ${title}`);
+                continue;
+              }
+
+              const body = `
+              ### ⚠️ Código Duplicado Detectado
+              
+              O pipeline identificou lógica idêntica em dois arquivos diferentes.
+              
+              - **Arquivo 1:** \`${fileA.name}\` (Linhas: ${fileA.start} - ${fileA.end})
+              - **Arquivo 2:** \`${fileB.name}\` (Linhas: ${fileB.start} - ${fileB.end})
+              
+              ---
+              ### 🛠️ Sugestão
+              Considere extrair essa lógica para um componente ou função reutilizável.
+              `;
 
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: title,
-                body: `O pipeline detectou duplicação de código. Isso não impediu o deploy, mas deve ser corrigido futuramente.\n\nLinhas: ${dupe.firstFile.start}-${dupe.firstFile.end}`,
-                labels: ['code-smell', 'wont-fix-deploy']
+                body: body,
+                labels: ['code-smell', 'wont-fix-deploy'] // Label indica que não bloqueou deploy
               });
+              
+              console.log(`✅ Issue criada: ${title}`);
             }
+            
+            // REMOVIDO: core.setFailed(...)
+            // O script termina com sucesso mesmo achando problemas.
+            
           } catch (error) {
-            console.log('Erro ao processar issues, mas seguindo para deploy.');
+            console.error('Erro ao processar issues:', error);
+            // Não falhamos o pipeline mesmo se der erro no script
           }
 
     # --- FASE 6: ENTREGA (CD) ---
