@@ -134,8 +134,8 @@ jobs:
 
     # --- FASE 6: ENTREGA (CD) ---
     - name: 🚀 Deploy para Vercel
-      if: success()
-      uses: amondnet/vercel-action@v25 # ATUALIZAÇÃO: Usando versão mais recente (v25)
+      if: success() && github.ref == 'refs/heads/main'
+      uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
