@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2, Copy, Check, ChevronDown } from "lucide-react";
+import { ArrowLeft, Copy, Check } from "lucide-react";
 
 import { useCodeSkeleton } from "../hooks/useCodeSkeleton";
 import { Button } from "../../../components/common/Button";

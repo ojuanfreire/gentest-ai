@@ -1,0 +1,143 @@
+name: CI/CD Pipeline - GenTestAI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  continuous-integration-and-deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+    # --- FASE 1: SETUP ---
+    - name: 📥 Checkout do Código
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js (v20)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: 📦 Instalar Dependências
+      run: npm ci
+
+    # --- FASE 2: INTEGRIDADE (Bloqueante) ---
+    - name: 🏗️ Verificar Build (Compilação)
+      working-directory: ./app
+      run: npm run build
+
+    # --- FASE 3: TESTES (Bloqueante) ---
+    - name: 🧪 Rodar Testes
+      working-directory: ./app
+      run: npm test -- --run
+
+    # --- FASE 4: QUALIDADE (Apenas Aviso) ---
+    - name: 🔍 Detectar Código Duplicado (jscpd)
+      id: jscpd
+      working-directory: ./app
+      continue-on-error: true
+      run: |
+        # set +e impede que o script pare se o jscpd encontrar erros
+        set +e
+        
+        npx jscpd src/ --reporters json --output "./report"
+        exit_code=$?
+        
+        set -e
+
+        if [ $exit_code -ne 0 ]; then
+          echo "⚠️ Duplicatas encontradas. Gerando alerta..."
+          echo "has_smells=true" >> $GITHUB_OUTPUT
+        else
+          echo "✅ Código limpo."
+          echo "has_smells=false" >> $GITHUB_OUTPUT
+        fi
+
+    # --- FASE 5: NOTIFICAÇÃO (Opcional) ---
+    - name: 📝 Criar Issues de Code Smell (Sem parar o Deploy)
+      if: steps.jscpd.outputs.has_smells == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          
+          try {
+            // 1. Ler o relatório JSON
+            const reportContent = fs.readFileSync('./app/report/jscpd-report.json', 'utf8');
+            const report = JSON.parse(reportContent);
+            
+            // Limita a 10 para não estourar limites da API em casos extremos
+            const duplicates = report.duplicates.slice(0, 10);
+            
+            console.log(`🔍 Encontradas ${report.duplicates.length} duplicações.`);
+
+            // 2. Buscar issues ABERTAS de smell para evitar duplicatas
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'code-smell'
+            });
+
+            for (const dupe of duplicates) {
+              const fileA = dupe.firstFile;
+              const fileB = dupe.secondFile;
+              
+              // Título único para identificação
+              const title = `🚨 Code Smell: Duplicação em ${fileA.name} e ${fileB.name}`;
+              
+              // Se já existe, pula e avisa no log
+              if (existingIssues.data.find(i => i.title === title)) {
+                console.log(`⚠️ Issue já existe: ${title}`);
+                continue;
+              }
+
+              const body = `
+              ### ⚠️ Código Duplicado Detectado
+              
+              O pipeline identificou lógica idêntica em dois arquivos diferentes.
+              
+              - **Arquivo 1:** \`${fileA.name}\` (Linhas: ${fileA.start} - ${fileA.end})
+              - **Arquivo 2:** \`${fileB.name}\` (Linhas: ${fileB.start} - ${fileB.end})
+              
+              ---
+              ### 🛠️ Sugestão
+              Considere extrair essa lógica para um componente ou função reutilizável.
+              `;
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['code-smell', 'wont-fix-deploy'] // Label indica que não bloqueou deploy
+              });
+              
+              console.log(`✅ Issue criada: ${title}`);
+            }
+            
+            // REMOVIDO: core.setFailed(...)
+            // O script termina com sucesso mesmo achando problemas.
+            
+          } catch (error) {
+            console.error('Erro ao processar issues:', error);
+            // Não falhamos o pipeline mesmo se der erro no script
+          }
+
+    # --- FASE 6: ENTREGA (CD) ---
+    - name: 🚀 Deploy para Vercel
+      if: success() && github.ref == 'refs/heads/main'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'

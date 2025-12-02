@@ -1,0 +1,22 @@
+{
+  "threshold": 0,
+  "reporters": ["console", "markdown", "json"],
+  "output": "./report",
+  "ignore": [
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.temp/**",
+    "**/vite.config.ts",
+    "**/types/**"
+  ],
+  "format": ["typescript", "javascript", "tsx"],
+  
+  "// Comentário": "Configurações de Sensibilidade",
+  "minLines": 10,
+  "minTokens": 70,
+  "skipComments": true,
+  "ignorePattern": ["import.*from"]
+}

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 import { Button } from "../../../components/common/Button";
-import { Input } from "../../../components/common/Input";
 import { TextArea } from "../../../components/common/TextArea";
 import type { Project } from "../../../types/index";
 
-export type ProjectFormData = Omit<Project, "id" | "createdAt" | "ownerId">;
+export type ProjectFormData = Pick<Project, "name" | "description">;
 
 type CreateProjectModalProps = {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Button } from "../../../components/common/Button";
 import { useTestCases } from "../hooks/useTestCases";
 import { EditTestCaseModal } from "../../testCases/components/EditTestCaseModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
