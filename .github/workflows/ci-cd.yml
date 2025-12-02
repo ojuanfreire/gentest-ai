@@ -43,13 +43,13 @@ jobs:
     - name: 🔍 Detectar Código Duplicado (jscpd)
       id: jscpd
       working-directory: ./app
-      continue-on-error: true
       run: |
-        npx jscpd src/ --output "./report"
-        if [ $? -ne 0 ]; then
-          echo "has_smells=true" >> $GITHUB_OUTPUT
-        else
+        if npx jscpd src/ --output "./report"; then
+          echo "✅ Nenhum código duplicado encontrado."
           echo "has_smells=false" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Código duplicado detectado!"
+          echo "has_smells=true" >> $GITHUB_OUTPUT
         fi
 
     # --- FASE 5: NOTIFICAÇÃO ---
