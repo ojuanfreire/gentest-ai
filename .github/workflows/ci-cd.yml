@@ -43,38 +43,84 @@ jobs:
     - name: 🔍 Detectar Código Duplicado (jscpd)
       id: jscpd
       working-directory: ./app
+      continue-on-error: true # Deixa continuar para o script de processamento abaixo
       run: |
-        if npx jscpd src/ --output "./report"; then
-          echo "✅ Nenhum código duplicado encontrado."
-          echo "has_smells=false" >> $GITHUB_OUTPUT
-        else
-          echo "⚠️ Código duplicado detectado!"
+        # Gera o relatório em JSON para podermos ler os detalhes depois
+        npx jscpd src/ --reporters json --output "./report"
+        
+        # Salva o status numa variável de saída
+        if [ $? -ne 0 ]; then
           echo "has_smells=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_smells=false" >> $GITHUB_OUTPUT
         fi
 
-    # --- FASE 5: NOTIFICAÇÃO ---
-    - name: 📝 Criar Issue de Code Smell
+    # --- FASE 5: NOTIFICAÇÃO DETALHADA (Loop) ---
+    - name: 📝 Processar Duplicatas e Criar Issues
       if: steps.jscpd.outputs.has_smells == 'true'
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
-          let report = '';
+          
           try {
-            report = fs.readFileSync('./app/report/jscpd-report.md', 'utf8');
-          } catch (e) {
-            report = 'Duplicação detectada. Verifique os logs do pipeline.';
+            // 1. Ler o relatório JSON gerado pelo jscpd
+            const reportContent = fs.readFileSync('./app/report/jscpd-report.json', 'utf8');
+            const report = JSON.parse(reportContent);
+            
+            // 2. Iterar sobre cada duplicação encontrada
+            // (Limitamos a 15 issues para evitar bloqueio de API do GitHub se houver muitas)
+            const duplicates = report.duplicates.slice(0, 15);
+            
+            console.log(`Encontradas ${report.duplicates.length} duplicações. Criando issues para as primeiras ${duplicates.length}...`);
+
+            for (const dupe of duplicates) {
+              const fileA = dupe.firstFile;
+              const fileB = dupe.secondFile;
+              
+              // Monta um título descritivo
+              const title = `🚨 Code Smell: Duplicação em ${fileA.name} e ${fileB.name}`;
+              
+              // Monta um corpo detalhado com linhas e código
+              const body = `
+              ### ⚠️ Código Duplicado Detectado
+              
+              O pipeline de CI identificou um trecho de código idêntico em dois arquivos.
+              Isso viola o princípio DRY (Don't Repeat Yourself).
+              
+              **Arquivo 1:** \`${fileA.name}\` (Linhas: ${fileA.start}-${fileA.end})
+              **Arquivo 2:** \`${fileB.name}\` (Linhas: ${fileB.start}-${fileB.end})
+              
+              ---
+              
+              ### 🛠️ Ação Necessária
+              Refatore o código para extrair a lógica comum para uma função ou componente reutilizável.
+              
+              Para fechar esta issue automaticamente no próximo commit, use:
+              \`git commit -m "Refactor: remove duplication. Closes #<ID_DA_ISSUE>"\`
+              `;
+
+              // 3. Criar a Issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['code-smell', 'refactor']
+              });
+            }
+            
+            // 4. FALHAR O PIPELINE
+            core.setFailed(`🚨 Falha de Qualidade: ${report.duplicates.length} duplicações encontradas. Issues criadas.`);
+            
+          } catch (error) {
+            console.error(error);
+            core.setFailed('Erro ao processar relatório de duplicação.');
           }
 
-          await github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: '🚨 Code Smell: Código Duplicado Detectado',
-            body: `O pipeline de CI detectou trechos de código duplicado.\n\nPor favor, refatore para remover a duplicação.\n\n${report}`
-          });
-
+    # --- FASE 6: ENTREGA (CD) ---
     - name: 🚀 Deploy para Vercel
-      if: success() && steps.jscpd.outputs.has_smells == 'false'
+      if: success()
       uses: amondnet/vercel-action@v20
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
