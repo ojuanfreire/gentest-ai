@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # --- FASE 1: SETUP ---
     - name: 📥 Checkout do Código
       uses: actions/checkout@v4
 
@@ -23,33 +24,35 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: app/package-lock.json
+        cache-dependency-path: package-lock.json
 
     - name: 📦 Instalar Dependências
-      working-directory: ./app
       run: npm ci
 
+    # --- FASE 2: INTEGRIDADE (CI) ---
     - name: 🏗️ Verificar Build (Compilação)
       working-directory: ./app
       run: npm run build
 
+    # --- FASE 3: TESTES (CI) ---
     - name: 🧪 Rodar Testes Unitários (TDD)
       working-directory: ./app
       run: npm test -- --run
 
+    # --- FASE 4: QUALIDADE (Code Smell) ---
     - name: 🔍 Detectar Código Duplicado (jscpd)
       id: jscpd
       working-directory: ./app
       continue-on-error: true
       run: |
         npx jscpd src/ --output "./report"
-        # Se encontrar duplicatas, marca uma variável para o próximo passo
         if [ $? -ne 0 ]; then
           echo "has_smells=true" >> $GITHUB_OUTPUT
         else
           echo "has_smells=false" >> $GITHUB_OUTPUT
         fi
 
+    # --- FASE 5: NOTIFICAÇÃO ---
     - name: 📝 Criar Issue de Code Smell
       if: steps.jscpd.outputs.has_smells == 'true'
       uses: actions/github-script@v6
@@ -60,7 +63,7 @@ jobs:
           try {
             report = fs.readFileSync('./app/report/jscpd-report.md', 'utf8');
           } catch (e) {
-            report = 'Duplicação detectada, mas não foi possível ler o relatório detalhado.';
+            report = 'Duplicação detectada. Verifique os logs do pipeline.';
           }
 
           await github.rest.issues.create({
