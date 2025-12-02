@@ -1,0 +1,81 @@
+name: CI/CD Pipeline - GenTestAI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  continuous-integration-and-deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout do Código
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: app/package-lock.json
+
+    - name: 📦 Instalar Dependências
+      working-directory: ./app
+      run: npm ci
+
+    - name: 🏗️ Verificar Build (Compilação)
+      working-directory: ./app
+      run: npm run build
+
+    - name: 🧪 Rodar Testes Unitários (TDD)
+      working-directory: ./app
+      run: npm test -- --run
+
+    - name: 🔍 Detectar Código Duplicado (jscpd)
+      id: jscpd
+      working-directory: ./app
+      continue-on-error: true
+      run: |
+        npx jscpd src/ --output "./report"
+        # Se encontrar duplicatas, marca uma variável para o próximo passo
+        if [ $? -ne 0 ]; then
+          echo "has_smells=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_smells=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: 📝 Criar Issue de Code Smell
+      if: steps.jscpd.outputs.has_smells == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          let report = '';
+          try {
+            report = fs.readFileSync('./app/report/jscpd-report.md', 'utf8');
+          } catch (e) {
+            report = 'Duplicação detectada, mas não foi possível ler o relatório detalhado.';
+          }
+
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Code Smell: Código Duplicado Detectado',
+            body: `O pipeline de CI detectou trechos de código duplicado.\n\nPor favor, refatore para remover a duplicação.\n\n${report}`
+          });
+
+    - name: 🚀 Deploy para Vercel
+      if: success() && steps.jscpd.outputs.has_smells == 'false'
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./app
+        vercel-args: '--prod'

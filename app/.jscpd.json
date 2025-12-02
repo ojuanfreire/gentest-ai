@@ -1,0 +1,12 @@
+{
+  "threshold": 0,
+  "reporters": ["console", "markdown"],
+  "output": "./report",
+  "ignore": [
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/node_modules/**",
+    "**/dist/**"
+  ],
+  "format": ["typescript", "javascript", "tsx"]
+}
