@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../../../components/common/Button";
-import { Input } from "../../../components/common/Input";
 import { TextArea } from "../../../components/common/TextArea";
 import { X } from "lucide-react";
 import type { UseCase } from "../../../types/index";
