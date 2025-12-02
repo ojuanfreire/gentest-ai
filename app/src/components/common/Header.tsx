@@ -7,11 +7,10 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Mock do usuário logado (substituir pelo seu Contexto de Autenticação futuramente)
   const user = {
     name: "Usuário GenTest",
     email: "usuario@gentest.ai",
-    avatarUrl: null, // Caso tenha foto, coloque a URL aqui
+    avatarUrl: null,
   };
 
   useEffect(() => {
@@ -25,7 +24,7 @@ export const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    // Adicionar a lógica real de logout (ex: supabase.auth.signOut())
+    // Adicionar a lógica real de logout
     console.log("Efetuando logout...");
 
     // Limpa dados locais se necessário
