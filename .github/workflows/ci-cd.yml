@@ -75,43 +75,57 @@ jobs:
           const fs = require('fs');
           
           try {
-            // 1. Ler o relatório JSON gerado pelo jscpd
+            // 1. Ler o relatório JSON
             const reportContent = fs.readFileSync('./app/report/jscpd-report.json', 'utf8');
             const report = JSON.parse(reportContent);
-            
-            // 2. Iterar sobre cada duplicação encontrada
-            // (Limitamos a 15 issues para evitar bloqueio de API do GitHub se houver muitas)
             const duplicates = report.duplicates.slice(0, 15);
             
-            console.log(`Encontradas ${report.duplicates.length} duplicações. Criando issues para as primeiras ${duplicates.length}...`);
+            console.log(`🔍 Encontradas ${report.duplicates.length} duplicações.`);
+
+            // 2. Buscar TODAS as issues ABERTAS que tenham a label 'code-smell'
+            // Isso evita criar duplicatas. Trazemos as 100 primeiras (suficiente para o projeto)
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'code-smell',
+              per_page: 100
+            });
+
+            console.log(`📂 Issues abertas de smell encontradas: ${existingIssues.data.length}`);
+
+            let issuesCreated = 0;
 
             for (const dupe of duplicates) {
               const fileA = dupe.firstFile;
               const fileB = dupe.secondFile;
               
-              // Monta um título descritivo
+              // O Título é nossa "Chave Única" para identificar a duplicação
               const title = `🚨 Code Smell: Duplicação em ${fileA.name} e ${fileB.name}`;
               
-              // Monta um corpo detalhado com linhas e código
+              // 3. VERIFICAÇÃO: A issue já existe na lista que baixamos?
+              const alreadyExists = existingIssues.data.find(issue => issue.title === title);
+              
+              if (alreadyExists) {
+                console.log(`⚠️ Issue já existe (PULANDO): ${title} (#${alreadyExists.number})`);
+                continue; // Vai para a próxima iteração do loop
+              }
+
+              // Se não existe, monta o corpo e cria
               const body = `
               ### ⚠️ Código Duplicado Detectado
               
               O pipeline de CI identificou um trecho de código idêntico em dois arquivos.
-              Isso viola o princípio DRY (Don't Repeat Yourself).
               
               **Arquivo 1:** \`${fileA.name}\` (Linhas: ${fileA.start}-${fileA.end})
               **Arquivo 2:** \`${fileB.name}\` (Linhas: ${fileB.start}-${fileB.end})
               
               ---
-              
               ### 🛠️ Ação Necessária
-              Refatore o código para extrair a lógica comum para uma função ou componente reutilizável.
-              
-              Para fechar esta issue automaticamente no próximo commit, use:
-              \`git commit -m "Refactor: remove duplication. Closes #<ID_DA_ISSUE>"\`
+              Refatore para remover a duplicação.
+              Feche esta issue automaticamente com: \`git commit -m "refactor: fix duplication. Closes #<ID>"\`
               `;
 
-              // 3. Criar a Issue
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -119,10 +133,13 @@ jobs:
                 body: body,
                 labels: ['code-smell', 'refactor']
               });
+              
+              console.log(`✅ Issue criada: ${title}`);
+              issuesCreated++;
             }
             
-            // 4. FALHAR O PIPELINE
-            core.setFailed(`🚨 Falha de Qualidade: ${report.duplicates.length} duplicações encontradas. Issues criadas.`);
+            // 4. FALHAR O PIPELINE (Para bloquear o Deploy)
+            core.setFailed(`🚨 Pipeline Falhou: ${report.duplicates.length} duplicações ativas. (${issuesCreated} issues novas criadas).`);
             
           } catch (error) {
             console.error(error);
