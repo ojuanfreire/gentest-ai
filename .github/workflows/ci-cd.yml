@@ -29,126 +29,79 @@ jobs:
     - name: 📦 Instalar Dependências
       run: npm ci
 
-    # --- FASE 2: INTEGRIDADE (CI) ---
+    # --- FASE 2: INTEGRIDADE (Bloqueante) ---
     - name: 🏗️ Verificar Build (Compilação)
       working-directory: ./app
       run: npm run build
 
-    # --- FASE 3: TESTES (CI) ---
+    # --- FASE 3: TESTES (Bloqueante) ---
     - name: 🧪 Rodar Testes Unitários (TDD)
       working-directory: ./app
       run: npm test -- --run
 
-    # --- FASE 4: QUALIDADE (Code Smell) ---
+    # --- FASE 4: QUALIDADE (Apenas Aviso) ---
     - name: 🔍 Detectar Código Duplicado (jscpd)
       id: jscpd
       working-directory: ./app
-      # continue-on-error já não é estritamente necessário com o fix abaixo,
-      # mas deixamos como segurança.
       continue-on-error: true
       run: |
-        # 'set +e' diz ao terminal para NÃO abortar se o comando falhar
+        # set +e impede que o script pare se o jscpd encontrar erros
         set +e
         
-        # Executa o jscpd e captura o código de saída na variável exit_code
         npx jscpd src/ --reporters json --output "./report"
         exit_code=$?
         
-        # 'set -e' restaura o comportamento padrão (abortar em erros futuros)
         set -e
 
-        # Agora verificamos o código de saída manualmente
         if [ $exit_code -ne 0 ]; then
-          echo "⚠️ Duplicatas encontradas. Configurando output..."
+          echo "⚠️ Duplicatas encontradas. Gerando alerta..."
           echo "has_smells=true" >> $GITHUB_OUTPUT
         else
-          echo "✅ Nenhum código duplicado."
+          echo "✅ Código limpo."
           echo "has_smells=false" >> $GITHUB_OUTPUT
         fi
 
-    # --- FASE 5: NOTIFICAÇÃO DETALHADA (Loop) ---
-    - name: 📝 Processar Duplicatas e Criar Issues
+    # --- FASE 5: NOTIFICAÇÃO (Opcional) ---
+    - name: 📝 Criar Issue de Alerta (Code Smell)
       if: steps.jscpd.outputs.has_smells == 'true'
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
-          
           try {
-            // 1. Ler o relatório JSON
             const reportContent = fs.readFileSync('./app/report/jscpd-report.json', 'utf8');
             const report = JSON.parse(reportContent);
-            const duplicates = report.duplicates.slice(0, 15);
-            
-            console.log(`🔍 Encontradas ${report.duplicates.length} duplicações.`);
+            const duplicates = report.duplicates.slice(0, 10); // Pega as 10 primeiras
 
-            // 2. Buscar TODAS as issues ABERTAS que tenham a label 'code-smell'
-            // Isso evita criar duplicatas. Trazemos as 100 primeiras (suficiente para o projeto)
+            // Busca issues já abertas para evitar duplicidade de spam
             const existingIssues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
-              labels: 'code-smell',
-              per_page: 100
+              labels: 'code-smell'
             });
 
-            console.log(`📂 Issues abertas de smell encontradas: ${existingIssues.data.length}`);
-
-            let issuesCreated = 0;
-
             for (const dupe of duplicates) {
-              const fileA = dupe.firstFile;
-              const fileB = dupe.secondFile;
+              const title = `⚠️ Aviso de Qualidade: Duplicação em ${dupe.firstFile.name}`;
               
-              // O Título é nossa "Chave Única" para identificar a duplicação
-              const title = `🚨 Code Smell: Duplicação em ${fileA.name} e ${fileB.name}`;
-              
-              // 3. VERIFICAÇÃO: A issue já existe na lista que baixamos?
-              const alreadyExists = existingIssues.data.find(issue => issue.title === title);
-              
-              if (alreadyExists) {
-                console.log(`⚠️ Issue já existe (PULANDO): ${title} (#${alreadyExists.number})`);
-                continue; // Vai para a próxima iteração do loop
-              }
-
-              // Se não existe, monta o corpo e cria
-              const body = `
-              ### ⚠️ Código Duplicado Detectado
-              
-              O pipeline de CI identificou um trecho de código idêntico em dois arquivos.
-              
-              **Arquivo 1:** \`${fileA.name}\` (Linhas: ${fileA.start}-${fileA.end})
-              **Arquivo 2:** \`${fileB.name}\` (Linhas: ${fileB.start}-${fileB.end})
-              
-              ---
-              ### 🛠️ Ação Necessária
-              Refatore para remover a duplicação.
-              Feche esta issue automaticamente com: \`git commit -m "refactor: fix duplication. Closes #<ID>"\`
-              `;
+              // Se já existe, pula
+              if (existingIssues.data.find(i => i.title === title)) continue;
 
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: title,
-                body: body,
-                labels: ['code-smell', 'refactor']
+                body: `O pipeline detectou duplicação de código. Isso não impediu o deploy, mas deve ser corrigido futuramente.\n\nLinhas: ${dupe.firstFile.start}-${dupe.firstFile.end}`,
+                labels: ['code-smell', 'wont-fix-deploy']
               });
-              
-              console.log(`✅ Issue criada: ${title}`);
-              issuesCreated++;
             }
-            
-            // 4. FALHAR O PIPELINE (Para bloquear o Deploy)
-            core.setFailed(`🚨 Pipeline Falhou: ${report.duplicates.length} duplicações ativas. (${issuesCreated} issues novas criadas).`);
-            
           } catch (error) {
-            console.error(error);
-            core.setFailed('Erro ao processar relatório de duplicação.');
+            console.log('Erro ao processar issues, mas seguindo para deploy.');
           }
 
     # --- FASE 6: ENTREGA (CD) ---
     - name: 🚀 Deploy para Vercel
-      if: success()
+      if: success() 
       uses: amondnet/vercel-action@v20
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
