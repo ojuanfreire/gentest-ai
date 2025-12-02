@@ -1,3 +1,5 @@
+// Fazendo um teste para o CI/CD
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bot, LogOut, User, ChevronDown } from "lucide-react";
