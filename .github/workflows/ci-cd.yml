@@ -43,15 +43,26 @@ jobs:
     - name: 🔍 Detectar Código Duplicado (jscpd)
       id: jscpd
       working-directory: ./app
-      continue-on-error: true # Deixa continuar para o script de processamento abaixo
+      # continue-on-error já não é estritamente necessário com o fix abaixo,
+      # mas deixamos como segurança.
+      continue-on-error: true
       run: |
-        # Gera o relatório em JSON para podermos ler os detalhes depois
-        npx jscpd src/ --reporters json --output "./report"
+        # 'set +e' diz ao terminal para NÃO abortar se o comando falhar
+        set +e
         
-        # Salva o status numa variável de saída
-        if [ $? -ne 0 ]; then
+        # Executa o jscpd e captura o código de saída na variável exit_code
+        npx jscpd src/ --reporters json --output "./report"
+        exit_code=$?
+        
+        # 'set -e' restaura o comportamento padrão (abortar em erros futuros)
+        set -e
+
+        # Agora verificamos o código de saída manualmente
+        if [ $exit_code -ne 0 ]; then
+          echo "⚠️ Duplicatas encontradas. Configurando output..."
           echo "has_smells=true" >> $GITHUB_OUTPUT
         else
+          echo "✅ Nenhum código duplicado."
           echo "has_smells=false" >> $GITHUB_OUTPUT
         fi
 
