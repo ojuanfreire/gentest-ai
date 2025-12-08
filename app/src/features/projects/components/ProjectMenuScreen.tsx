@@ -9,7 +9,6 @@ import type { Project } from "../../../types";
 import { CreateProjectModal, type ProjectFormData } from "./CreateProjectModal";
 import { EditProjectModal } from "./EditProjectModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
-import { Header } from "../../../components/common/Header";
 
 export const ProjectMenuScreen = () => {
   const navigate = useNavigate();
@@ -131,7 +130,6 @@ export const ProjectMenuScreen = () => {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
-      <Header />
 
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">

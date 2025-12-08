@@ -6,7 +6,7 @@ import { Input } from "../../../components/common/Input";
 import { Link, useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
-  const { loading, error, handleSignIn } = useAuth();
+  const { loading, error, signIn } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ export const LoginForm = () => {
     e.preventDefault();
 
     try {
-      await handleSignIn(email, password);
+      await signIn(email, password);
       navigate("/projects");
     } catch (error) {
       console.log(error);

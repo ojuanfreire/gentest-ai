@@ -10,7 +10,6 @@ import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import type { UseCase } from "../../../types/index";
-import { Header } from "../../../components/common/Header";
 
 export const ProjectArtifactsScreen = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -126,7 +125,6 @@ export const ProjectArtifactsScreen = () => {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
-      <Header />
 
       <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
         <div className="mx-auto max-w-7xl flex items-center">

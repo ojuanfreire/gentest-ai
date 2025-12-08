@@ -1,16 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { User } from "@supabase/supabase-js";
 import * as authService from "../services/authService";
+import { supabase } from "../../../api/supabaseClient";
 
 export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sessionLoading, setSessionLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkSession = async () => {
+      try {
+        const session = await authService.getSession();
+        if (mounted) {
+          setUser(session?.user ?? null);
+        }
+      } catch (err) {
+        console.error("Erro ao verificar sessão:", err);
+      } finally {
+        if (mounted) {
+          setSessionLoading(false);
+        }
+      }
+    };
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (mounted) {
+        setUser(session?.user ?? null);
+        setSessionLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleSignIn = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
       const user = await authService.signIn(email, password);
-
+      setUser(user);
       return user;
     } catch (error) {
       if (error instanceof Error) {
@@ -18,7 +55,6 @@ export const useAuth = () => {
         throw error;
       }
     } finally {
-      // Garante que o loading pare, mesmo se der erro
       setLoading(false);
     }
   };
@@ -32,7 +68,6 @@ export const useAuth = () => {
     setError(null);
     try {
       const user = await authService.signUp(name, email, password);
-
       return user;
     } catch (error) {
       if (error instanceof Error) {
@@ -40,7 +75,22 @@ export const useAuth = () => {
         throw error;
       }
     } finally {
-      // Garante que o loading pare, mesmo se der erro
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await authService.signOut();
+      setUser(null);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        throw error;
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -49,32 +99,26 @@ export const useAuth = () => {
     setLoading(true);
     setError(null);
     try {
-      // Código original (chamada real ao serviço)
-      // await authService.sendPasswordResetEmail(email);
-
-      // Mock da chamada de recuperação
-      console.log(`Mock: Enviando link de reset para: ${email}`);
-
-      // Simula um atraso de rede
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simula erro
-      if (email.includes("error@")) {
-        throw new Error("E-mail não encontrado ou erro no servidor.");
-      }
-
-      console.log("Mock: Link de reset enviado!");
-      return true;
+      console.log("Reset password for", email);
+      return 1;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
-        return false;
+        throw error;
       }
     } finally {
-      // Garante que o loading pare, mesmo se der erro
       setLoading(false);
     }
   };
 
-  return { loading, error, handleSignIn, handleSignUp, handlePasswordReset };
+  return {
+    user,
+    loading,
+    sessionLoading,
+    error,
+    signIn: handleSignIn,
+    signUp: handleSignUp,
+    signOut: handleSignOut,
+    resetPassword: handlePasswordReset,
+  };
 };

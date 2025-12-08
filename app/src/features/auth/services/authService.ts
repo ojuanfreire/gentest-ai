@@ -31,3 +31,26 @@ export const signIn = async (email: string, password: string) => {
 
   return data.user;
 };
+
+export const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getSession = async () => {
+  const { data: { session }, error } = await supabase.auth.getSession();
+  if (error) {
+    throw new Error(error.message);
+  }
+  return session;
+};
+
+export const getCurrentUser = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    throw new Error(error.message);
+  }
+  return user;
+};

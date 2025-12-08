@@ -6,7 +6,7 @@ import { Input } from "../../../components/common/Input";
 import { Link, useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
-  const { loading, error, handleSignUp } = useAuth();
+  const { loading, error, signUp } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -70,7 +70,7 @@ export const RegisterForm = () => {
     }
 
     try {
-      await handleSignUp(name, email, password);
+      await signUp(name, email, password);
       navigate("/login");
     } catch(error) {
       setFormError("Erro ao registrar. Tente novamente.");

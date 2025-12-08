@@ -5,7 +5,6 @@ import { ArrowLeft, Copy, Check } from "lucide-react";
 import { useCodeSkeleton } from "../hooks/useCodeSkeleton";
 import { Button } from "../../../components/common/Button";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
-import { Header } from "../../../components/common/Header";
 
 export const CodeSkeletonScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,7 +56,6 @@ export const CodeSkeletonScreen = () => {
 
   return (
     <div className="min-h-screen w-full bg-slate-900 text-white">
-      <Header />
       {/* --- Header da Página --- */}
       <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
         <div className="mx-auto max-w-4xl flex items-center">
