@@ -10,25 +10,34 @@ export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const checkSession = async () => {
       try {
         const session = await authService.getSession();
-        setUser(session?.user ?? null);
+        if (mounted) {
+          setUser(session?.user ?? null);
+        }
       } catch (err) {
         console.error("Erro ao verificar sessão:", err);
       } finally {
-        setSessionLoading(false);
+        if (mounted) {
+          setSessionLoading(false);
+        }
       }
     };
 
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setSessionLoading(false);
+      if (mounted) {
+        setUser(session?.user ?? null);
+        setSessionLoading(false);
+      }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -91,6 +100,7 @@ export const useAuth = () => {
     setError(null);
     try {
       console.log("Reset password for", email);
+      return 1;
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

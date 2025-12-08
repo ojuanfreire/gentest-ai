@@ -17,7 +17,6 @@ import { Button } from "../../../components/common/Button";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import { EditTestCaseModal } from "../components/EditTestCaseModal";
 import type { SkeletonFramework, TestCase } from "../../../types";
-import { Header } from "../../../components/common/Header";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -118,7 +117,6 @@ export const TestCaseDetailsScreen = () => {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
-      <Header />
 
       <header className="border-b border-slate-700 bg-slate-800/50 px-4 py-4 sm:px-6">
         <div className="mx-auto max-w-5xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

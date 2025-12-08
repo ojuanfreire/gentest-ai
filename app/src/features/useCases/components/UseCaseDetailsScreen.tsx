@@ -8,7 +8,6 @@ import { TestCaseList } from "../components/TestCaseList";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import type { UseCase } from "../../../types/index";
-import { Header } from "../../../components/common/Header";
 
 export const UseCaseDetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -92,8 +91,6 @@ export const UseCaseDetailsScreen = () => {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
-      <Header />
-
       <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
         <div className="mx-auto max-w-5xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Button

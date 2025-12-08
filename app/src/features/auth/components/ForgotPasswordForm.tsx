@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export const ForgotPasswordForm = () => {
   // O hook agora provê a função handlePasswordReset
-  const { loading, error, handlePasswordReset } = useAuth();
+  const { loading, error, resetPassword } = useAuth();
 
   const [email, setEmail] = useState("");
   // Estado local para mensagem de sucesso
@@ -16,7 +16,7 @@ export const ForgotPasswordForm = () => {
     e.preventDefault();
     setMessage(null);
 
-    const success = await handlePasswordReset(email);
+    const success = await resetPassword(email);
 
     if (success) {
       setMessage(
