@@ -38,6 +38,7 @@ export const useAuth = () => {
     setError(null);
     try {
       const user = await authService.signIn(email, password);
+      setUser(user);
       return user;
     } catch (error) {
       if (error instanceof Error) {

@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bot, LogOut, User, ChevronDown } from "lucide-react";
+import { Bot, LogOut, ChevronDown } from "lucide-react";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const user = {
-    name: "Usuário GenTest",
-    email: "usuario@gentest.ai",
-    avatarUrl: null,
+  const userData = {
+    name: user?.user_metadata?.name || "Usuário",
+    email: user?.email || "",
+    avatarUrl: user?.user_metadata?.avatar_url || null,
   };
 
   useEffect(() => {
@@ -23,24 +25,17 @@ export const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    // Adicionar a lógica real de logout
-    console.log("Efetuando logout...");
-
-    // Limpa dados locais se necessário
-    localStorage.removeItem("user_session");
-
-    // Redireciona para login
+  const handleLogout = async () => {
+    await signOut();
     navigate("/login");
   };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
-        {/* Lado Esquerdo: Logo e Nome */}
         <div
           className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
-          onClick={() => navigate("/")} // Redireciona para Home/Dashboard
+          onClick={() => navigate("/")}
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-lg shadow-blue-900/20">
             <Bot size={20} />
@@ -50,36 +45,34 @@ export const Header = () => {
           </span>
         </div>
 
-        {/* Lado Direito: Menu do Usuário */}
+
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex items-center gap-3 rounded-full border border-slate-700 bg-slate-800 py-1.5 pl-2 pr-3 transition-colors hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
-            {/* Avatar / Círculo com Inicial */}
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-sm font-bold text-white">
-              {user.avatarUrl ? (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-sm font-bold text-white overflow-hidden">
+              {userData.avatarUrl ? (
                 <img
-                  src={user.avatarUrl}
+                  src={userData.avatarUrl}
                   alt="Avatar"
-                  className="h-full w-full rounded-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <User size={16} />
+                <span className="uppercase">{userData.name.charAt(0)}</span>
               )}
             </div>
 
             <div className="hidden flex-col items-start text-left sm:flex">
               <span className="text-xs font-medium text-slate-200">
-                {user.name}
+                {userData.name}
               </span>
             </div>
 
             <ChevronDown
               size={16}
-              className={`text-slate-400 transition-transform duration-200 ${
-                isMenuOpen ? "rotate-180" : ""
-              }`}
+              className={`text-slate-400 transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -88,7 +81,7 @@ export const Header = () => {
               <div className="border-b border-slate-700 px-4 py-3">
                 <p className="text-sm text-white">Logado como</p>
                 <p className="truncate text-xs font-medium text-slate-400">
-                  {user.email}
+                  {userData.email}
                 </p>
               </div>
 
@@ -104,6 +97,7 @@ export const Header = () => {
             </div>
           )}
         </div>
+
       </div>
     </header>
   );
