@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus, Workflow, ArrowLeft } from "lucide-react";
+import { Plus, Workflow, ArrowLeft, Search, RefreshCw, FileText } from "lucide-react"; // Ícones adicionais
 
 import { useUseCases } from "../hooks/useUseCases";
 import { UseCaseCard } from "../components/UseCaseCard";
@@ -29,7 +29,6 @@ export const ProjectArtifactsScreen = () => {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const [selectedUseCase, setSelectedUseCase] = useState<UseCase | null>(null);
   const [useCaseToDelete, setUseCaseToDelete] = useState<UseCase | null>(null);
 
@@ -41,7 +40,6 @@ export const ProjectArtifactsScreen = () => {
 
   const handleCreateFormSubmit = async (data: UseCaseFormData) => {
     if (!projectId) return;
-
     const success = await handleCreateUseCase(data, projectId);
     if (success) setIsCreateModalOpen(false);
   };
@@ -74,43 +72,52 @@ export const ProjectArtifactsScreen = () => {
   };
 
   const renderLoading = () => (
-    <div className="flex h-64 flex-col items-center justify-center text-slate-400">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-600 border-t-blue-500 mb-4"></div>
-      <p>Carregando casos de uso...</p>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {[1, 2].map((i) => (
+        <div key={i} className="h-56 w-full animate-pulse rounded-2xl bg-slate-800/50 border border-slate-800"></div>
+      ))}
     </div>
   );
 
   const renderError = () => (
-    <div className="mt-10 rounded-md bg-red-900/50 p-4 text-center text-red-300">
-      <p>Ocorreu um erro:</p>
-      <p className="font-medium">{error}</p>
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-900/10 p-8 text-center backdrop-blur-sm">
+      <div className="mb-3 rounded-full bg-red-500/10 p-3 text-red-400">
+        <RefreshCw size={24} />
+      </div>
+      <p className="text-lg font-semibold text-white">Erro ao carregar</p>
+      <p className="text-sm text-red-300/70 mb-4">{error}</p>
+      <Button
+        onClick={() => projectId && fetchUseCases(projectId)}
+        className="rounded-lg bg-red-600/20 px-4 py-2 text-sm text-red-200 hover:bg-red-600/30 border border-red-500/30"
+      >
+        Tentar Novamente
+      </Button>
     </div>
   );
 
   const renderEmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="mb-4 rounded-full bg-slate-800 p-6">
-        <Workflow size={48} className="text-slate-600" />
+    <div className="flex flex-col items-center justify-center py-16 text-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/20 hover:bg-slate-900/40 transition-colors">
+      <div className="group mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-800 shadow-inner ring-1 ring-white/5 transition-transform hover:scale-110 hover:-rotate-3">
+        <Workflow size={40} className="text-blue-500 opacity-80 group-hover:opacity-100" />
       </div>
-      <h3 className="text-xl font-semibold text-white">
+      <h3 className="text-xl font-bold text-white">
         Nenhum caso de uso encontrado
       </h3>
       <p className="mt-2 max-w-sm text-slate-400">
-        Este projeto ainda não possui casos de uso. Crie o primeiro para começar
-        a gerar testes.
+        Este projeto está vazio. Comece definindo os casos de uso para gerar seus testes automatizados.
       </p>
       <Button
         onClick={() => setIsCreateModalOpen(true)}
-        className="mt-6 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full shadow-lg shadow-blue-900/20"
+        className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
       >
         <Plus size={20} />
-        Criar primeiro caso de uso
+        Criar Primeiro Caso de Uso
       </Button>
     </div>
   );
 
   const renderUseCases = () => (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 animate-fade-in-up">
       {useCases.map((useCase) => (
         <UseCaseCard
           key={useCase.id}
@@ -124,15 +131,15 @@ export const ProjectArtifactsScreen = () => {
   );
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-900 text-white">
+    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white">
 
-      <header className="border-b border-slate-700 bg-slate-800/50 px-6 py-4">
-        <div className="mx-auto max-w-7xl flex items-center">
+      <header className="top-0 z-30 border-b border-white/5 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/60 bg-opacity-0">
+        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <Button
             onClick={() => navigate(-1)}
-            className="flex w-fit items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none"
+            className="group flex w-fit items-center gap-2 bg-transparent pl-0 text-slate-400 transition-colors hover:bg-transparent hover:text-white border-none"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             Voltar aos Projetos
           </Button>
         </div>
@@ -140,28 +147,50 @@ export const ProjectArtifactsScreen = () => {
 
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">
-          <h1 className="mb-6 text-3xl font-bold text-white">
-            Artefatos do Projeto
-          </h1>
 
+          {/* Título da Página */}
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                Artefatos do Projeto
+              </h1>
+              <p className="mt-1 text-slate-400">
+                Gerencie os casos de uso e requisitos deste projeto.
+              </p>
+            </div>
+          </div>
+
+          {/* Tabs / Filtros */}
           <div className="mb-8 flex items-center justify-between border-b border-slate-800 pb-4">
-            <h2 className="text-2xl font-semibold text-slate-200 flex items-center gap-2">
-              Casos de Uso
-              {!loading && (
-                <span className="text-sm font-normal text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
-                  {useCases.length}
-                </span>
-              )}
-            </h2>
+            <div className="flex items-center gap-6">
+              <button className="flex items-center gap-2 border-b-2 border-blue-500 pb-4 text-sm font-bold text-white">
+                <FileText size={16} />
+                Casos de Uso
+                {!loading && (
+                  <span className="ml-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-xs text-blue-300">
+                    {useCases.length}
+                  </span>
+                )}
+              </button>
+            </div>
 
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              disabled={loading}
-              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-            >
-              <Plus size={20} />
-              Novo Caso de Uso
-            </Button>
+            <div className="flex items-center gap-4">
+              {/* Barra de Ações */}
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400">
+                  <Search size={18} />
+                  <span className="text-sm">Buscar caso de uso...</span>
+                </div>
+              </div>
+              <Button
+                onClick={() => setIsCreateModalOpen(true)}
+                disabled={loading}
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500 hover:scale-105 disabled:opacity-50"
+              >
+                <Plus size={20} />
+                <span className="hidden sm:inline">Novo Caso de Uso</span>
+              </Button>
+            </div>
           </div>
 
           <div className="min-h-[400px]">

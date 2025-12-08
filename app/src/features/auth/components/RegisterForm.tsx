@@ -1,9 +1,18 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { 
+  User, 
+  Mail, 
+  Lock, 
+  Check, 
+  ArrowRight, 
+  Loader2, 
+  ShieldCheck 
+} from "lucide-react";
 
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
 import { Input } from "../../../components/common/Input";
-import { Link, useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
   const { loading, error, signUp } = useAuth();
@@ -72,83 +81,144 @@ export const RegisterForm = () => {
     try {
       await signUp(name, email, password);
       navigate("/login");
-    } catch(error) {
+    } catch (error) {
       setFormError("Erro ao registrar. Tente novamente.");
       console.log(error);
     }
   };
 
+  const inputIconWrapperClass = "group relative";
+  const inputIconClass = "pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 transition-colors group-focus-within:text-blue-500";
+  const inputFieldClass = "w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-900 p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-lg bg-slate-800 p-8 shadow-xl"
-      >
-        <h2 className="mb-6 text-center text-3xl font-bold text-white">
-          Criar Conta
-        </h2>
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-slate-950 text-slate-200 p-4">
+      
+      {/* Background Ambience */}
+      <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]"></div>
+      <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
-        <div className="flex flex-col gap-4">
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nome Completo"
-            autoComplete="name"
-            className="w-full rounded-md border border-slate-600 bg-slate-700 p-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            autoComplete="email"
-            className="w-full rounded-md border border-slate-600 bg-slate-700 p-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Senha"
-            autoComplete="new-password"
-            className="w-full rounded-md border border-slate-600 bg-slate-700 p-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirmar Senha"
-            autoComplete="new-password"
-            className="w-full rounded-md border border-slate-600 bg-slate-700 p-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      <div className="relative z-10 w-full max-w-md">
+        
+        {/* Card */}
+        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
+          
+          <div className="p-8 sm:p-10">
+            {/* Header */}
+            <div className="mb-8 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-blue-500 shadow-lg">
+                <ShieldCheck size={28} />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-white">
+                Crie sua conta
+              </h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Junte-se ao <span className="font-semibold text-slate-300">GenTest AI</span> e comece agora.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              
+              {/* NOME */}
+              <div className={inputIconWrapperClass}>
+                <div className={inputIconClass}>
+                  <User size={18} />
+                </div>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nome Completo"
+                  autoComplete="name"
+                  className={inputFieldClass}
+                />
+              </div>
+
+              {/* EMAIL */}
+              <div className={inputIconWrapperClass}>
+                <div className={inputIconClass}>
+                  <Mail size={18} />
+                </div>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Seu melhor e-mail"
+                  autoComplete="email"
+                  className={inputFieldClass}
+                />
+              </div>
+
+              {/* SENHA */}
+              <div className={inputIconWrapperClass}>
+                <div className={inputIconClass}>
+                  <Lock size={18} />
+                </div>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Crie uma senha forte"
+                  autoComplete="new-password"
+                  className={inputFieldClass}
+                />
+              </div>
+
+              {/* CONFIRMAR SENHA */}
+              <div className={inputIconWrapperClass}>
+                <div className={inputIconClass}>
+                  <Check size={18} />
+                </div>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirme sua senha"
+                  autoComplete="new-password"
+                  className={inputFieldClass}
+                />
+              </div>
+
+              {/* MENSAGEM DE ERRO */}
+              {(formError || error) && (
+                <div className="mt-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm font-medium text-red-400 animate-pulse">
+                  {formError || error}
+                </div>
+              )}
+
+              {/* BOTÃO DE AÇÃO */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="group mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] hover:shadow-blue-500/40 disabled:opacity-70 border-none"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" /> Criando conta...
+                  </>
+                ) : (
+                  <>
+                    Registrar <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-slate-800/50 bg-slate-900/50 p-4 text-center">
+            <p className="text-sm text-slate-400">
+              Já possui uma conta?{" "}
+              <Link
+                to="/"
+                className="font-medium text-blue-400 transition-colors hover:text-blue-300 hover:underline"
+              >
+                Fazer Login
+              </Link>
+            </p>
+          </div>
         </div>
-
-        {(formError || error) && (
-          <p className="mt-3 text-center text-sm text-red-500">
-            {formError || error}
-          </p>
-        )}
-
-        <Button
-          type="submit"
-          disabled={loading}
-          className="mt-6 w-full rounded-md bg-blue-600 py-3 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
-        >
-          {loading ? "Registrando..." : "Registrar"}
-        </Button>
-
-        <div className="mt-6 text-center text-sm">
-          <p className="mt-4 text-slate-400">
-            Já possui uma conta?{" "}
-            <Link
-              to="/"
-              className="font-medium text-blue-500 transition-colors hover:underline"
-            >
-              Entrar
-            </Link>
-          </p>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };

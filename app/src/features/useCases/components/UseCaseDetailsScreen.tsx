@@ -92,7 +92,7 @@ export const UseCaseDetailsScreen = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 text-slate-200">
+    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white">
 
       <header className="top-0 z-10 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md px-6 py-4">
         <div className="mx-auto max-w-5xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -115,7 +115,7 @@ export const UseCaseDetailsScreen = () => {
 
             <Button
               onClick={() => setIsEditModalOpen(true)}
-              className="flex-1 sm:flex-none justify-center flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 border border-blue-400/20 px-6 py-2 font-semibold text-white hover:shadow-lg hover:shadow-blue-500/25 hover:scale-[1.02] transition-all"
+              className="flex items-center justify-center gap-2 rounded-lg bg-blue-600/10 px-4 py-2 font-medium text-blue-400 hover:bg-blue-600/20 transition-colors border border-blue-500/20"
             >
               <Edit2 size={18} /> Editar
             </Button>
