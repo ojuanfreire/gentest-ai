@@ -103,8 +103,6 @@ export const ForgotPasswordForm = () => {
               </AnimatePresence>
 
               <Button
-                as={motion.button}
-                whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={loading}
                 className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 disabled:opacity-70 border-none"

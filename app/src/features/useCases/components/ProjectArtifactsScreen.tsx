@@ -34,7 +34,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.5 }, // Removido ease: "easeOut"
   },
 };
 
@@ -174,7 +174,7 @@ export const ProjectArtifactsScreen = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5 }}
       className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white"
     >
       <header className="top-0 z-30 border-b border-white/5 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/60 bg-opacity-0">
