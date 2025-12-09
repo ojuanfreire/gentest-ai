@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bot, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
@@ -26,12 +27,17 @@ export const LoginForm = () => {
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-slate-950 text-slate-200">
-      {/* Efeitos de Luz de Fundo */}
       <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]"></div>
       <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
       <div className="relative z-10 w-full max-w-md px-4">
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
+        <motion.div
+          layout
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5"
+        >
           <div className="p-8 sm:p-10">
             <div className="mb-8 flex flex-col items-center text-center">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 shadow-lg shadow-blue-500/20">
@@ -82,16 +88,23 @@ export const LoginForm = () => {
                 </Link>
               </div>
 
-              {error && (
-                <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm text-red-400 animate-pulse">
-                  {error}
-                </div>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm text-red-400"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <Button
                 type="submit"
                 disabled={loading}
-                className="group mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] hover:shadow-blue-500/40 disabled:opacity-70 border-none"
+                className="group mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 disabled:opacity-70 border-none"
               >
                 {loading ? (
                   <>
@@ -121,7 +134,7 @@ export const LoginForm = () => {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

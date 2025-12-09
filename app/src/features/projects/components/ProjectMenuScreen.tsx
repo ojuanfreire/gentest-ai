@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, FolderOpen, LayoutGrid, Search, RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useProjects } from "../hooks/useProjects";
 import { ProjectCard } from "../components/ProjectCard";
@@ -9,6 +10,25 @@ import type { Project } from "../../../types";
 import { CreateProjectModal, type ProjectFormData } from "./CreateProjectModal";
 import { EditProjectModal } from "./EditProjectModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 }, // Removido ease: "easeOut"
+  },
+};
 
 export const ProjectMenuScreen = () => {
   const navigate = useNavigate();
@@ -68,7 +88,10 @@ export const ProjectMenuScreen = () => {
   const renderLoading = () => (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="h-48 w-full animate-pulse rounded-2xl bg-slate-800/50 border border-slate-800"></div>
+        <div
+          key={i}
+          className="h-48 w-full animate-pulse rounded-2xl bg-slate-800/50 border border-slate-800"
+        ></div>
       ))}
     </div>
   );
@@ -92,29 +115,39 @@ export const ProjectMenuScreen = () => {
   );
 
   const renderProjectsList = () => (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in-up">
+    <motion.div
+      className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {projects.map((project) => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-          onClick={handleProjectClick}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-        />
+        <motion.div key={project.id} variants={itemVariants}>
+          <ProjectCard
+            project={project}
+            onClick={handleProjectClick}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+          />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 
   const renderEmptyState = () => (
     <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/30 p-10 text-center transition-all hover:border-slate-700 hover:bg-slate-900/50">
       <div className="group mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-800 shadow-inner ring-1 ring-white/5 transition-transform duration-500 hover:scale-110 hover:rotate-3">
-        <FolderOpen size={40} className="text-blue-500 opacity-80 transition-opacity group-hover:opacity-100" />
+        <FolderOpen
+          size={40}
+          className="text-blue-500 opacity-80 transition-opacity group-hover:opacity-100"
+        />
       </div>
       <h3 className="text-2xl font-bold text-white">
         Nenhum projeto encontrado
       </h3>
       <p className="mt-3 max-w-md text-slate-400">
-        Parece que você ainda não criou nenhum projeto. Comece criando um workspace para organizar seus casos de uso.
+        Parece que você ainda não criou nenhum projeto. Comece criando um
+        workspace para organizar seus casos de uso.
       </p>
       <Button
         onClick={() => setIsCreateModalOpen(true)}
@@ -127,12 +160,14 @@ export const ProjectMenuScreen = () => {
   );
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white">
-
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white"
+    >
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl space-y-10">
-          
-          {/* Header da Página */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
@@ -143,7 +178,6 @@ export const ProjectMenuScreen = () => {
               </p>
             </div>
 
-            {/* Barra de Ações */}
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400">
                 <Search size={24} />
@@ -161,19 +195,17 @@ export const ProjectMenuScreen = () => {
             </div>
           </div>
 
-          {/* Barra de Filtros / Status */}
           <div className="flex items-center gap-4 border-b border-slate-800 pb-4">
             <button className="flex items-center gap-2 border-b-2 border-blue-500 pb-4 text-sm font-bold text-white">
-                <LayoutGrid size={16} /> Todos os Projetos
-                {!loading && (
-                    <span className="ml-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-xs text-blue-300">
-                        {projects.length}
-                    </span>
-                )}
+              <LayoutGrid size={16} /> Todos os Projetos
+              {!loading && (
+                <span className="ml-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-xs text-blue-300">
+                  {projects.length}
+                </span>
+              )}
             </button>
           </div>
 
-          {/* Conteúdo Principal */}
           <div className="min-h-[400px]">
             {loading && renderLoading()}
             {!loading && error && renderError()}
@@ -183,7 +215,6 @@ export const ProjectMenuScreen = () => {
         </div>
       </main>
 
-      {/* Modais */}
       <CreateProjectModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -207,6 +238,6 @@ export const ProjectMenuScreen = () => {
         title="Excluir Projeto"
         message={`Tem certeza que deseja excluir o projeto "${projectToDelete?.name}"? Todos os casos de teste associados serão perdidos.`}
       />
-    </div>
+    </motion.div>
   );
 };

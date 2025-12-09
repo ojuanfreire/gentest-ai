@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus, Workflow, ArrowLeft, Search, RefreshCw, FileText } from "lucide-react"; // Ícones adicionais
+import {
+  Plus,
+  Workflow,
+  ArrowLeft,
+  Search,
+  RefreshCw,
+  FileText,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useUseCases } from "../hooks/useUseCases";
 import { UseCaseCard } from "../components/UseCaseCard";
@@ -10,6 +18,25 @@ import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
 import { DeleteConfirmationModal } from "../../../components/common/DeleteConfirmationModal";
 import type { UseCase } from "../../../types/index";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 }, // Removido ease: "easeOut"
+  },
+};
 
 export const ProjectArtifactsScreen = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -74,7 +101,10 @@ export const ProjectArtifactsScreen = () => {
   const renderLoading = () => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {[1, 2].map((i) => (
-        <div key={i} className="h-56 w-full animate-pulse rounded-2xl bg-slate-800/50 border border-slate-800"></div>
+        <div
+          key={i}
+          className="h-56 w-full animate-pulse rounded-2xl bg-slate-800/50 border border-slate-800"
+        ></div>
       ))}
     </div>
   );
@@ -98,13 +128,17 @@ export const ProjectArtifactsScreen = () => {
   const renderEmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 text-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/20 hover:bg-slate-900/40 transition-colors">
       <div className="group mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-800 shadow-inner ring-1 ring-white/5 transition-transform hover:scale-110 hover:-rotate-3">
-        <Workflow size={40} className="text-blue-500 opacity-80 group-hover:opacity-100" />
+        <Workflow
+          size={40}
+          className="text-blue-500 opacity-80 group-hover:opacity-100"
+        />
       </div>
       <h3 className="text-xl font-bold text-white">
         Nenhum caso de uso encontrado
       </h3>
       <p className="mt-2 max-w-sm text-slate-400">
-        Este projeto está vazio. Comece definindo os casos de uso para gerar seus testes automatizados.
+        Este projeto está vazio. Comece definindo os casos de uso para gerar
+        seus testes automatizados.
       </p>
       <Button
         onClick={() => setIsCreateModalOpen(true)}
@@ -117,29 +151,42 @@ export const ProjectArtifactsScreen = () => {
   );
 
   const renderUseCases = () => (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 animate-fade-in-up">
+    <motion.div
+      className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {useCases.map((useCase) => (
-        <UseCaseCard
-          key={useCase.id}
-          useCase={useCase}
-          onViewClick={handleViewClick}
-          onEditClick={handleOpenEditModal}
-          onDeleteClick={handleOpenDeleteModal}
-        />
+        <motion.div key={useCase.id} variants={itemVariants}>
+          <UseCaseCard
+            useCase={useCase}
+            onViewClick={handleViewClick}
+            onEditClick={handleOpenEditModal}
+            onDeleteClick={handleOpenDeleteModal}
+          />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white">
-
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white"
+    >
       <header className="top-0 z-30 border-b border-white/5 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/60 bg-opacity-0">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <Button
             onClick={() => navigate(-1)}
             className="group flex w-fit items-center gap-2 bg-transparent pl-0 text-slate-400 transition-colors hover:bg-transparent hover:text-white border-none"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             Voltar aos Projetos
           </Button>
         </div>
@@ -147,8 +194,6 @@ export const ProjectArtifactsScreen = () => {
 
       <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">
-
-          {/* Título da Página */}
           <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
@@ -160,7 +205,6 @@ export const ProjectArtifactsScreen = () => {
             </div>
           </div>
 
-          {/* Tabs / Filtros */}
           <div className="mb-8 flex items-center justify-between border-b border-slate-800 pb-4">
             <div className="flex items-center gap-6">
               <button className="flex items-center gap-2 border-b-2 border-blue-500 pb-4 text-sm font-bold text-white">
@@ -175,7 +219,6 @@ export const ProjectArtifactsScreen = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Barra de Ações */}
               <div className="flex items-center gap-3">
                 <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400">
                   <Search size={18} />
@@ -225,6 +268,6 @@ export const ProjectArtifactsScreen = () => {
         title="Excluir Caso de Uso"
         message={`Tem certeza que deseja excluir "${useCaseToDelete?.name}"? Esta ação não pode ser desfeita e todos os testes associados serão removidos.`}
       />
-    </div>
+    </motion.div>
   );
 };

@@ -9,6 +9,7 @@ import {
   User,
   AlertCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useUseCases } from "../hooks/useUseCases";
 import { Button } from "../../../components/common/Button";
@@ -33,6 +34,9 @@ export const UseCaseDetailsScreen = () => {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Estado para simular geração
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -72,6 +76,12 @@ export const UseCaseDetailsScreen = () => {
     }
   };
 
+  const handleGenerateTestCases = () => {
+    setIsGenerating(true);
+    // Lógica futura de geração aqui
+    setTimeout(() => setIsGenerating(false), 2000);
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
@@ -100,7 +110,12 @@ export const UseCaseDetailsScreen = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white"
+    >
       <header className="top-0 z-10 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md px-6 py-4">
         <div className="mx-auto max-w-5xl flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Button
@@ -150,7 +165,6 @@ export const UseCaseDetailsScreen = () => {
         <div className="grid gap-6 sm:gap-8 grid-cols-1">
           <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-1 sm:p-1 shadow-2xl">
             <div className="rounded-lg bg-slate-900/40 p-5 sm:p-8 backdrop-blur-sm">
-              {/* Detalhes do Caso de Uso */}
               <div className="group">
                 <div className="flex items-center gap-2 mb-6">
                   <Layers size={20} className="text-blue-500" />
@@ -169,7 +183,6 @@ export const UseCaseDetailsScreen = () => {
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/* Ator Principal */}
                 <div className="group">
                   <div className="flex items-center gap-2 mb-2">
                     <User size={16} className="text-blue-400/70" />
@@ -182,7 +195,6 @@ export const UseCaseDetailsScreen = () => {
                   </div>
                 </div>
 
-                {/* Criado em */}
                 <div className="group">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar size={16} className="text-blue-400/70" />
@@ -198,7 +210,6 @@ export const UseCaseDetailsScreen = () => {
                 </div>
               </div>
 
-              {/* Pré-condições */}
               <div className="mt-8 group">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle size={16} className="text-blue-400/70" />
@@ -212,7 +223,6 @@ export const UseCaseDetailsScreen = () => {
               </div>
 
               <div className="mt-8 mb-2 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/* Fluxo Principal */}
                 <div className="flex flex-col h-full group">
                   <h4 className="mb-3 text-xs font-bold uppercase text-slate-400 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
                     <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
@@ -223,7 +233,6 @@ export const UseCaseDetailsScreen = () => {
                   </div>
                 </div>
 
-                {/* Fluxo Alternativo */}
                 <div className="flex flex-col h-full group">
                   <h4 className="mb-3 text-xs font-bold uppercase text-slate-400 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
                     <span className="w-2 h-2 rounded-full bg-slate-600"></span>
@@ -238,7 +247,11 @@ export const UseCaseDetailsScreen = () => {
           </div>
 
           <section>
-            <TestCaseList useCaseId={useCase.id} />
+            <TestCaseList
+              useCaseId={useCase.id}
+              onGenerate={handleGenerateTestCases}
+              isGenerating={isGenerating}
+            />
           </section>
         </div>
       </main>
@@ -259,6 +272,6 @@ export const UseCaseDetailsScreen = () => {
         title="Excluir Caso de Uso"
         message={`Tem certeza que deseja excluir "${useCase.name}"? Todos os casos de teste associados também serão perdidos.`}
       />
-    </div>
+    </motion.div>
   );
 };
