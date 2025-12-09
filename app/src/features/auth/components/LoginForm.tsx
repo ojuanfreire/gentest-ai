@@ -26,15 +26,12 @@ export const LoginForm = () => {
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-slate-950 text-slate-200">
-      
       {/* Efeitos de Luz de Fundo */}
       <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]"></div>
       <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
       <div className="relative z-10 w-full max-w-md px-4">
-        
         <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
-          
           <div className="p-8 sm:p-10">
             <div className="mb-8 flex flex-col items-center text-center">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 shadow-lg shadow-blue-500/20">
@@ -44,7 +41,8 @@ export const LoginForm = () => {
                 Bem-vindo de volta
               </h2>
               <p className="mt-2 text-sm text-slate-400">
-                Acesse sua conta no <span className="font-semibold text-slate-300">GenTest AI</span>
+                Acesse sua conta no{" "}
+                <span className="font-semibold text-slate-300">GenTest AI</span>
               </p>
             </div>
 
@@ -58,7 +56,7 @@ export const LoginForm = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Seu endereço de e-mail"
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
+                  className="outline-none w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
                 />
               </div>
 
@@ -71,7 +69,7 @@ export const LoginForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Sua senha segura"
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
+                  className="outline-none w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
                 />
               </div>
 
@@ -101,13 +99,17 @@ export const LoginForm = () => {
                   </>
                 ) : (
                   <>
-                    Entrar <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                    Entrar{" "}
+                    <ArrowRight
+                      size={18}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
                   </>
                 )}
               </Button>
             </form>
           </div>
-          
+
           <div className="border-t border-slate-800/50 bg-slate-900/50 p-4 text-center">
             <p className="text-sm text-slate-400">
               Ainda não possui uma conta?{" "}
@@ -119,7 +121,6 @@ export const LoginForm = () => {
               </Link>
             </p>
           </div>
-
         </div>
       </div>
     </div>

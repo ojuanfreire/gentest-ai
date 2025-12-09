@@ -12,7 +12,7 @@ import {
   Terminal,
   Clock,
   CheckCircle2,
-  ListOrdered
+  ListOrdered,
 } from "lucide-react";
 
 import { useTestCaseDetails } from "../hooks/useTestCaseDetails";
@@ -96,11 +96,11 @@ export const TestCaseDetailsScreen = () => {
   if (loading) {
     return (
       <div className="flex min-h-screen w-full flex-col bg-slate-950 p-6 lg:p-10">
-         <div className="mx-auto w-full max-w-5xl space-y-6 animate-pulse">
-            <div className="h-8 w-1/3 bg-slate-800 rounded-lg"></div>
-            <div className="h-64 w-full bg-slate-800/50 rounded-2xl"></div>
-            <div className="h-32 w-full bg-slate-800/50 rounded-2xl"></div>
-         </div>
+        <div className="mx-auto w-full max-w-5xl space-y-6 animate-pulse">
+          <div className="h-8 w-1/3 bg-slate-800 rounded-lg"></div>
+          <div className="h-64 w-full bg-slate-800/50 rounded-2xl"></div>
+          <div className="h-32 w-full bg-slate-800/50 rounded-2xl"></div>
+        </div>
       </div>
     );
   }
@@ -109,17 +109,44 @@ export const TestCaseDetailsScreen = () => {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 text-white">
         <div className="rounded-2xl border border-red-500/20 bg-red-900/10 p-8 text-center backdrop-blur-sm">
-            <h2 className="mb-2 text-xl font-bold">Caso de Teste não encontrado</h2>
-            <Button
+          <h2 className="mb-2 text-xl font-bold">
+            Caso de Teste não encontrado
+          </h2>
+          <Button
             onClick={() => navigate(-1)}
             className="mt-4 rounded-lg bg-slate-800 px-6 py-2 text-white hover:bg-slate-700"
-            >
+          >
             Voltar
-            </Button>
+          </Button>
         </div>
       </div>
     );
   }
+
+  // Função para formatar os passos caso venham como array JSON
+  const renderFormattedText = (text: string | undefined) => {
+    if (!text) return null;
+
+    try {
+      const parsed = JSON.parse(text);
+
+      if (Array.isArray(parsed)) {
+        return (
+          <ul className="flex flex-col gap-2 list-none">
+            {parsed.map((item, index) => (
+              <li key={index} className="text-slate-300 break-words">
+                {item}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+    } catch (e) {
+      return text;
+    }
+
+    return text;
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(124,58,237,0.15),rgba(255,255,255,0))] text-white">
@@ -129,7 +156,10 @@ export const TestCaseDetailsScreen = () => {
             onClick={() => navigate(-1)}
             className="group flex w-fit items-center gap-2 bg-transparent pl-0 text-slate-400 hover:bg-transparent hover:text-white border-none"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             Voltar ao Caso de Uso
           </Button>
 
@@ -139,14 +169,16 @@ export const TestCaseDetailsScreen = () => {
               disabled={isSubmitting}
               className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-4 py-2 font-medium text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20"
             >
-              <Trash2 size={18} /> <span className="sm:hidden lg:inline">Excluir</span>
+              <Trash2 size={18} />{" "}
+              <span className="sm:hidden lg:inline">Excluir</span>
             </Button>
 
             <Button
               onClick={() => setIsEditModalOpen(true)}
               className="flex items-center justify-center gap-2 rounded-lg bg-blue-600/10 px-4 py-2 font-medium text-blue-400 hover:bg-blue-600/20 transition-colors border border-blue-500/20"
             >
-              <Edit2 size={18} /> <span className="sm:hidden lg:inline">Editar</span>
+              <Edit2 size={18} />{" "}
+              <span className="sm:hidden lg:inline">Editar</span>
             </Button>
           </div>
         </div>
@@ -156,10 +188,10 @@ export const TestCaseDetailsScreen = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">
-                ID {testCase.id}
+              ID {testCase.id}
             </span>
             <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-400 border border-slate-700">
-                {testCase.type || "Funcional"}
+              {testCase.type || "Funcional"}
             </span>
           </div>
           <h1 className="text-3xl font-bold text-white leading-tight">
@@ -170,48 +202,51 @@ export const TestCaseDetailsScreen = () => {
         <div className="grid gap-8 grid-cols-1">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-1 shadow-lg backdrop-blur-sm">
             <div className="rounded-xl bg-slate-900/60 p-6 sm:p-8">
-                
-                {/* Descrição */}
-                <div className="mb-8">
-                    <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                        Descrição do Cenário
-                    </h3>
-                    <div className="w-full rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-slate-300 leading-relaxed shadow-inner">
-                        {testCase.description || <span className="italic text-slate-600">Sem descrição definida.</span>}
-                    </div>
+              {/* Descrição */}
+              <div className="mb-8 group">
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
+                  Descrição do Cenário
+                </h3>
+                <div className="w-full rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-slate-300 leading-relaxed shadow-inner group-hover:border-slate-700 transition-colors">
+                  {testCase.description || (
+                    <span className="italic text-slate-600">
+                      Sem descrição definida.
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Grid Passos vs Resultado */}
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="flex flex-col h-full group">
+                  <h4 className="mb-3 text-xs font-bold uppercase text-slate-400 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
+                    <ListOrdered size={16} /> Passos de Execução
+                  </h4>
+                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-sm text-slate-300 whitespace-pre-wrap leading-relaxed shadow-inner group-hover:border-slate-700 transition-colors">
+                    {renderFormattedText(testCase.steps)}
+                  </div>
                 </div>
 
-                {/* Grid Passos vs Resultado */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <div className="flex flex-col h-full">
-                        <h4 className="mb-3 text-xs font-bold uppercase text-blue-400 flex items-center gap-2">
-                            <ListOrdered size={16} /> Passos de Execução
-                        </h4>
-                        <div className="flex-1 rounded-lg border border-blue-900/20 bg-blue-950/10 p-5 text-sm text-slate-300 whitespace-pre-wrap leading-relaxed shadow-inner">
-                            {testCase.steps}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col h-full">
-                        <h4 className="mb-3 text-xs font-bold uppercase text-emerald-400 flex items-center gap-2">
-                            <CheckCircle2 size={16} /> Resultado Esperado
-                        </h4>
-                        <div className="flex-1 rounded-lg border border-emerald-900/20 bg-emerald-950/10 p-5 text-sm text-slate-300 whitespace-pre-wrap leading-relaxed shadow-inner">
-                            {testCase.expectedResult}
-                        </div>
-                    </div>
+                <div className="flex flex-col h-full group">
+                  <h4 className="mb-3 text-xs font-bold uppercase text-slate-400 flex items-center gap-2 group-hover:text-emerald-400 transition-colors">
+                    <CheckCircle2 size={16} /> Resultado Esperado
+                  </h4>
+                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-sm text-slate-300 whitespace-pre-wrap leading-relaxed shadow-inner group-hover:border-slate-700 transition-colors">
+                    {testCase.expectedResult}
+                  </div>
                 </div>
+              </div>
             </div>
           </div>
 
           <div className="space-y-6 pt-4">
             <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-violet-500/10 text-violet-400">
-                    <Terminal size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-white">
-                    Automação e Código
-                </h3>
+              <div className="p-2 rounded-lg bg-violet-500/10 text-violet-400">
+                <Terminal size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-white">
+                Automação e Código
+              </h3>
             </div>
 
             {/* Gerador */}
@@ -221,19 +256,23 @@ export const TestCaseDetailsScreen = () => {
                   Framework de Teste
                 </label>
                 <div className="relative">
-                    <select
-                        value={selectedFramework}
-                        onChange={(e) =>
-                        setSelectedFramework(e.target.value as SkeletonFramework)
-                        }
-                        className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-slate-200 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all cursor-pointer hover:border-slate-600"
-                    >
-                        <option value="JavaScript + Cypress">JavaScript + Cypress</option>
-                        <option value="Python + Playwright">Python + Playwright</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                        <Code2 size={16} />
-                    </div>
+                  <select
+                    value={selectedFramework}
+                    onChange={(e) =>
+                      setSelectedFramework(e.target.value as SkeletonFramework)
+                    }
+                    className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-slate-200 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all cursor-pointer hover:border-slate-600"
+                  >
+                    <option value="JavaScript + Cypress">
+                      JavaScript + Cypress
+                    </option>
+                    <option value="Python + Playwright">
+                      Python + Playwright
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                    <Code2 size={16} />
+                  </div>
                 </div>
               </div>
 
@@ -275,7 +314,9 @@ export const TestCaseDetailsScreen = () => {
                           </span>
                           <span className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
                             <Clock size={12} />
-                            {new Date(sk.createdAt).toLocaleDateString()} às{" "}
+                            {new Date(
+                              sk.createdAt
+                            ).toLocaleDateString()} às{" "}
                             {new Date(sk.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -307,23 +348,24 @@ export const TestCaseDetailsScreen = () => {
 
               {skeletons.length > ITEMS_PER_PAGE && (
                 <div className="mt-6 flex items-center justify-center gap-4 rounded-xl border border-slate-800 bg-slate-900/30 p-3">
-                    <button
-                      onClick={goToPrevPage}
-                      disabled={currentPage === 1}
-                      className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <span className="text-sm font-medium text-slate-400">
-                      Página <span className="text-white">{currentPage}</span> de {totalPages}
-                    </span>
-                    <button
-                      onClick={goToNextPage}
-                      disabled={currentPage === totalPages}
-                      className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span className="text-sm font-medium text-slate-400">
+                    Página <span className="text-white">{currentPage}</span> de{" "}
+                    {totalPages}
+                  </span>
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
               )}
             </div>

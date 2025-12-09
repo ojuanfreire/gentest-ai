@@ -25,12 +25,27 @@ export const EditTestCaseModal = ({
   const [steps, setSteps] = useState("");
   const [expectedResult, setExpectedResult] = useState("");
 
+  const formatForEditing = (content: string) => {
+    if (!content) return "";
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed.join("\n");
+      }
+    } catch (e) {
+      return content;
+    }
+    return content;
+  };
+
   useEffect(() => {
     if (isOpen && testCaseToEdit) {
       setTitle(testCaseToEdit.title);
       setDescription(testCaseToEdit.description || "");
-      setSteps(testCaseToEdit.steps);
-      setExpectedResult(testCaseToEdit.expectedResult);
+
+      // --- USO DA FORMATAÇÃO AQUI ---
+      setSteps(formatForEditing(testCaseToEdit.steps));
+      setExpectedResult(formatForEditing(testCaseToEdit.expectedResult));
     } else {
       setTitle("");
       setDescription("");
@@ -54,8 +69,10 @@ export const EditTestCaseModal = ({
 
   if (!isOpen) return null;
 
-  const inputClasses = "w-full rounded-lg border border-slate-700 bg-slate-950/50 p-3 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none";
-  const labelClasses = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
+  const inputClasses =
+    "w-full rounded-lg border border-slate-700 bg-slate-950/50 p-3 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none";
+  const labelClasses =
+    "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
 
   return (
     <div
@@ -63,19 +80,20 @@ export const EditTestCaseModal = ({
       role="dialog"
     >
       <div className="w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/50 max-h-[90vh] overflow-y-auto flex flex-col">
-        
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-900/50 backdrop-blur rounded-t-xl sticky top-0 z-10">
           <div className="flex items-center gap-3">
-             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
-                <Edit3 size={20} />
-             </div>
-             <div>
-                <h2 className="text-xl font-bold text-white">
-                  Editar Caso de Teste
-                </h2>
-                <p className="text-xs text-slate-500">Refine os passos e validações</p>
-             </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+              <Edit3 size={20} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">
+                Editar Caso de Teste
+              </h2>
+              <p className="text-xs text-slate-500">
+                Refine os passos e validações
+              </p>
+            </div>
           </div>
           <Button
             type="button"
@@ -86,8 +104,11 @@ export const EditTestCaseModal = ({
           </Button>
         </div>
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-            <form id="edit-testcase-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
-            
+          <form
+            id="edit-testcase-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-5"
+          >
             {/* Título */}
             <div>
               <label htmlFor="title" className={labelClasses}>
@@ -121,10 +142,12 @@ export const EditTestCaseModal = ({
 
             {/* Grid Passos vs Resultado */}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              
               {/* Coluna Passos */}
               <div>
-                <label htmlFor="steps" className={`${labelClasses} text-blue-400`}>
+                <label
+                  htmlFor="steps"
+                  className={`${labelClasses} text-blue-400`}
+                >
                   Passos de Execução
                 </label>
                 <TextArea
@@ -140,7 +163,10 @@ export const EditTestCaseModal = ({
 
               {/* Coluna Resultado */}
               <div>
-                <label htmlFor="expectedResult" className={`${labelClasses} text-emerald-500`}>
+                <label
+                  htmlFor="expectedResult"
+                  className={`${labelClasses} text-emerald-500`}
+                >
                   Resultado Esperado
                 </label>
                 <TextArea

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  KeyRound, 
-  Mail, 
-  ArrowLeft, 
-  CheckCircle, 
+import {
+  KeyRound,
+  Mail,
+  ArrowLeft,
+  CheckCircle,
   AlertCircle,
-  Loader2 
+  Loader2,
 } from "lucide-react";
 
 import { useAuth } from "../hooks/useAuth";
@@ -50,12 +50,12 @@ export const ForgotPasswordForm = () => {
                 Esqueceu a senha?
               </h2>
               <p className="mt-2 text-sm text-slate-400">
-                Sem problemas. Digite seu e-mail abaixo e nós ajudaremos você a recuperar o acesso.
+                Sem problemas. Digite seu e-mail abaixo e nós ajudaremos você a
+                recuperar o acesso.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              
               {/* Input Email */}
               <div className="group relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 transition-colors group-focus-within:text-blue-500">
@@ -67,7 +67,7 @@ export const ForgotPasswordForm = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="exemplo@email.com"
                   autoComplete="email"
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
+                  className="outline-none w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10"
                 />
               </div>
 
@@ -114,7 +114,6 @@ export const ForgotPasswordForm = () => {
               Voltar para o Login
             </Link>
           </div>
-
         </div>
       </div>
     </div>
