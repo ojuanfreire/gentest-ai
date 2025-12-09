@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  User, 
-  Mail, 
-  Lock, 
-  Check, 
-  ArrowRight, 
-  Loader2, 
-  ShieldCheck 
+import {
+  User,
+  Mail,
+  Lock,
+  Check,
+  ArrowRight,
+  Loader2,
+  ShieldCheck,
 } from "lucide-react";
 
 import { useAuth } from "../hooks/useAuth";
@@ -88,21 +88,20 @@ export const RegisterForm = () => {
   };
 
   const inputIconWrapperClass = "group relative";
-  const inputIconClass = "pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 transition-colors group-focus-within:text-blue-500";
-  const inputFieldClass = "w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10";
+  const inputIconClass =
+    "pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 transition-colors group-focus-within:text-blue-500";
+  const inputFieldClass =
+    "outline-none w-full rounded-lg border border-slate-800 bg-slate-950/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500/50 focus:bg-slate-950/80 focus:ring-4 focus:ring-blue-500/10";
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-slate-950 text-slate-200 p-4">
-      
       {/* Background Ambience */}
       <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]"></div>
       <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
       <div className="relative z-10 w-full max-w-md">
-        
         {/* Card */}
         <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
-          
           <div className="p-8 sm:p-10">
             {/* Header */}
             <div className="mb-8 text-center">
@@ -113,12 +112,13 @@ export const RegisterForm = () => {
                 Crie sua conta
               </h2>
               <p className="mt-2 text-sm text-slate-400">
-                Junte-se ao <span className="font-semibold text-slate-300">GenTest AI</span> e comece agora.
+                Junte-se ao{" "}
+                <span className="font-semibold text-slate-300">GenTest AI</span>{" "}
+                e comece agora.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              
               {/* NOME */}
               <div className={inputIconWrapperClass}>
                 <div className={inputIconClass}>
@@ -194,11 +194,16 @@ export const RegisterForm = () => {
               >
                 {loading ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" /> Criando conta...
+                    <Loader2 size={18} className="animate-spin" /> Criando
+                    conta...
                   </>
                 ) : (
                   <>
-                    Registrar <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                    Registrar{" "}
+                    <ArrowRight
+                      size={18}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
                   </>
                 )}
               </Button>

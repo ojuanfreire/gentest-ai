@@ -53,8 +53,10 @@ export const CreateUseCaseModal = ({
     return null;
   }
 
-  const inputClasses = "w-full rounded-lg border border-slate-700 bg-slate-950/50 p-3 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none";
-  const labelClasses = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
+  const inputClasses =
+    "w-full rounded-lg border border-slate-700 bg-slate-950/50 p-3 text-sm text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none";
+  const labelClasses =
+    "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500";
 
   return (
     <div
@@ -64,16 +66,17 @@ export const CreateUseCaseModal = ({
     >
       {/* Container Principal do Modal */}
       <div className="w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 shadow-2xl shadow-black/50 flex flex-col max-h-[90vh]">
-        
         {/* Header Fixo */}
         <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-900/50 backdrop-blur rounded-t-xl sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
-                <FilePlus size={20} />
+              <FilePlus size={20} />
             </div>
             <div>
-                <h2 className="text-xl font-bold text-white">Novo Caso de Uso</h2>
-                <p className="text-xs text-slate-500">Defina os detalhes para gerar testes</p>
+              <h2 className="text-xl font-bold text-white">Novo Caso de Uso</h2>
+              <p className="text-xs text-slate-500">
+                Defina os detalhes para gerar testes
+              </p>
             </div>
           </div>
           <Button
@@ -87,8 +90,11 @@ export const CreateUseCaseModal = ({
 
         {/* Corpo Scrollável */}
         <div className="overflow-y-auto p-6 custom-scrollbar">
-          <form id="create-usecase-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
-            
+          <form
+            id="create-usecase-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-5"
+          >
             {/* Nome e Ator */}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div>
@@ -154,10 +160,12 @@ export const CreateUseCaseModal = ({
 
             {/* Fluxos */}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              
               {/* Fluxo Principal */}
               <div>
-                <label htmlFor="mainFlow" className={`${labelClasses} text-blue-400`}>
+                <label
+                  htmlFor="mainFlow"
+                  className={`${labelClasses} text-blue-400`}
+                >
                   Fluxo Principal
                 </label>
                 <TextArea
@@ -167,13 +175,16 @@ export const CreateUseCaseModal = ({
                   placeholder="1. O usuário informa..."
                   rows={8}
                   required
-                  className={`${inputClasses} border-blue-900/30 bg-blue-950/20 focus:border-blue-500`}
+                  className={inputClasses}
                 />
               </div>
 
               {/* Fluxos Alternativos */}
               <div>
-                <label htmlFor="alternativeFlows" className={`${labelClasses} text-amber-500`}>
+                <label
+                  htmlFor="alternativeFlows"
+                  className={`${labelClasses} text-amber-500`}
+                >
                   Fluxos Alternativos
                 </label>
                 <TextArea
@@ -182,11 +193,10 @@ export const CreateUseCaseModal = ({
                   onChange={(e) => setAlternativeFlows(e.target.value)}
                   placeholder="1a. Se a senha for inválida..."
                   rows={8}
-                  className={`${inputClasses} border-amber-900/30 bg-amber-950/10 focus:border-amber-500 focus:ring-amber-500`}
+                  className={inputClasses}
                 />
               </div>
             </div>
-
           </form>
         </div>
 
