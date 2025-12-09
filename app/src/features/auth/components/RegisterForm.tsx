@@ -9,6 +9,7 @@ import {
   Loader2,
   ShieldCheck,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
@@ -95,15 +96,18 @@ export const RegisterForm = () => {
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-slate-950 text-slate-200 p-4">
-      {/* Background Ambience */}
       <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]"></div>
       <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
       <div className="relative z-10 w-full max-w-md">
-        {/* Card */}
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
+        <motion.div
+          layout
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5"
+        >
           <div className="p-8 sm:p-10">
-            {/* Header */}
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-blue-500 shadow-lg">
                 <ShieldCheck size={28} />
@@ -119,7 +123,6 @@ export const RegisterForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* NOME */}
               <div className={inputIconWrapperClass}>
                 <div className={inputIconClass}>
                   <User size={18} />
@@ -134,7 +137,6 @@ export const RegisterForm = () => {
                 />
               </div>
 
-              {/* EMAIL */}
               <div className={inputIconWrapperClass}>
                 <div className={inputIconClass}>
                   <Mail size={18} />
@@ -149,7 +151,6 @@ export const RegisterForm = () => {
                 />
               </div>
 
-              {/* SENHA */}
               <div className={inputIconWrapperClass}>
                 <div className={inputIconClass}>
                   <Lock size={18} />
@@ -164,7 +165,6 @@ export const RegisterForm = () => {
                 />
               </div>
 
-              {/* CONFIRMAR SENHA */}
               <div className={inputIconWrapperClass}>
                 <div className={inputIconClass}>
                   <Check size={18} />
@@ -179,18 +179,25 @@ export const RegisterForm = () => {
                 />
               </div>
 
-              {/* MENSAGEM DE ERRO */}
-              {(formError || error) && (
-                <div className="mt-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm font-medium text-red-400 animate-pulse">
-                  {formError || error}
-                </div>
-              )}
+              <AnimatePresence>
+                {(formError || error) && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm font-medium text-red-400"
+                  >
+                    {formError || error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              {/* BOTÃO DE AÇÃO */}
               <Button
+                as={motion.button}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={loading}
-                className="group mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] hover:shadow-blue-500/40 disabled:opacity-70 border-none"
+                className="group mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 disabled:opacity-70 border-none"
               >
                 {loading ? (
                   <>
@@ -210,7 +217,6 @@ export const RegisterForm = () => {
             </form>
           </div>
 
-          {/* Footer */}
           <div className="border-t border-slate-800/50 bg-slate-900/50 p-4 text-center">
             <p className="text-sm text-slate-400">
               Já possui uma conta?{" "}
@@ -222,7 +228,7 @@ export const RegisterForm = () => {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

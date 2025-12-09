@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../../../components/common/Button";
@@ -39,9 +40,14 @@ export const ForgotPasswordForm = () => {
       <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-purple-500/10 blur-[100px]"></div>
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5">
+        <motion.div
+          layout
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-xl ring-1 ring-white/5"
+        >
           <div className="p-8 sm:p-10">
-            {/* Header */}
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 shadow-lg shadow-blue-500/20">
                 <KeyRound size={28} className="text-white" />
@@ -56,7 +62,6 @@ export const ForgotPasswordForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* Input Email */}
               <div className="group relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 transition-colors group-focus-within:text-blue-500">
                   <Mail size={18} />
@@ -71,27 +76,38 @@ export const ForgotPasswordForm = () => {
                 />
               </div>
 
-              {/* Mensagem de Sucesso */}
-              {message && (
-                <div className="flex items-start gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-400 animate-fade-in">
-                  <CheckCircle size={18} className="mt-0.5 flex-shrink-0" />
-                  <p>{message}</p>
-                </div>
-              )}
+              <AnimatePresence mode="wait">
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-start gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-400"
+                  >
+                    <CheckCircle size={18} className="mt-0.5 flex-shrink-0" />
+                    <p>{message}</p>
+                  </motion.div>
+                )}
 
-              {/* Mensagem de Erro */}
-              {error && (
-                <div className="flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400 animate-pulse">
-                  <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
-                  <p>{error}</p>
-                </div>
-              )}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400"
+                  >
+                    <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
+                    <p>{error}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              {/* Botão Principal */}
               <Button
+                as={motion.button}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={loading}
-                className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] hover:shadow-blue-500/40 disabled:opacity-70 border-none"
+                className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 py-3 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 disabled:opacity-70 border-none"
               >
                 {loading ? (
                   <>
@@ -104,7 +120,6 @@ export const ForgotPasswordForm = () => {
             </form>
           </div>
 
-          {/* Footer */}
           <div className="border-t border-slate-800/50 bg-slate-900/50 p-4 text-center">
             <Link
               to="/"
@@ -114,7 +129,7 @@ export const ForgotPasswordForm = () => {
               Voltar para o Login
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
