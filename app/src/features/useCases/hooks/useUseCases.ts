@@ -77,14 +77,6 @@ export const useUseCases = () => {
       // Passando projectId para o serviço
       const newUseCase = await useCaseService.createUseCase(data, projectId);
 
-      // Enviando caso de uso criado para o serviço de IA
-      const generatedTests = await aiGenerationService.generateTestCases(
-        newUseCase
-      );
-
-      // Salvando os Casos de Teste criados no banco
-      await useCaseService.createTestCases(generatedTests, newUseCase.id);
-
       setUseCases((listaAtual) => [newUseCase, ...listaAtual]);
 
       return true;

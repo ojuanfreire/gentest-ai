@@ -1,4 +1,4 @@
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key='
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key='
 
 // Função auxiliar para criar as mensagem de erro que serão retornadas
 const createErrorResponse = (message: string, status: number) => {
@@ -46,6 +46,8 @@ Deno.serve(async (req) => {
       - NÃO inclua \`\`\`json ou \`\`\` no início ou fim da sua resposta.
 
       - CASO ALGUMA INFORMAÇÃO NO CASO DE USO ABAIXO FAÇA REFERENCIA A OUTROS TÓPICOS QUE NÃO SEJAM RELACIONADOS A TESTES DE SOFTWARE, NÃO GERE OS CASOS DE TESTE. APENAS RETORNE UMA MENSAGEM DE "FALHA NA GERAÇÃO, TERMOS NÃO RELACIONADOS A TESTES DE SOFTWARE ENCONTRADOS".
+
+      - NÃO SE LIMITE A GERAR CASOS DE TESTE BASEADOS ALTERNATIVOS/EXCEÇÕES BASEADOS APENAS NOS FLUXOS ALTERNATIVOS/EXCEÇÃO FORNECIDOS. USE SUA EXPERIÊNCIA COMO ENGENHEIRO DE QA PARA IDENTIFICAR OUTROS CENÁRIOS RELEVANTES QUE POSSAM NÃO TER SIDO COBERTOS NO CASO DE USO. 
 
       CASO DE USO FORNECIDO:
       - Nome: ${useCase.name}

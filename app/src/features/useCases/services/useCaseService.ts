@@ -202,6 +202,19 @@ const deleteTestCaseById = async (testCaseId: string): Promise<boolean> => {
   return true;
 };
 
+const deleteTestCasesByUseCaseId = async (useCaseId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from("test_cases")
+    .delete()
+    .eq("use_case_id", useCaseId);
+
+  if (error) {
+    console.error("Erro ao excluir casos de teste do caso de uso:", error);
+    throw new Error(error.message);
+  }
+  return true;
+};
+
 const updateUseCase = async (useCase: UseCase): Promise<UseCase> => {
   const dbPayload = {
     name: useCase.name,
@@ -238,4 +251,5 @@ export const useCaseService = {
   getTestCaseById,
   updateTestCase,
   deleteTestCaseById,
+  deleteTestCasesByUseCaseId,
 };

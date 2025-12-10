@@ -74,5 +74,6 @@ export const useTestCases = (useCaseId: string | number) => {
     isSubmitting,
     handleEditTestCase,
     handleDeleteTestCase,
+    fetchTestCases,
   };
 };

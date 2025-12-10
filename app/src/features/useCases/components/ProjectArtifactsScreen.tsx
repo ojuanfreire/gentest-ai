@@ -158,7 +158,12 @@ export const ProjectArtifactsScreen = () => {
       animate="visible"
     >
       {useCases.map((useCase) => (
-        <motion.div key={useCase.id} variants={itemVariants}>
+        <motion.div
+          key={useCase.id}
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <UseCaseCard
             useCase={useCase}
             onViewClick={handleViewClick}
