@@ -12,6 +12,8 @@ import {
 import { motion } from "framer-motion";
 
 import { useUseCases } from "../hooks/useUseCases";
+import { useCaseService } from "../services/useCaseService";
+import { aiGenerationService } from "../../ai/services/aiGenerationService";
 import { Button } from "../../../components/common/Button";
 import { TestCaseList } from "../components/TestCaseList";
 import { EditUseCaseModal } from "../components/EditUseCaseModal";
@@ -76,10 +78,20 @@ export const UseCaseDetailsScreen = () => {
     }
   };
 
-  const handleGenerateTestCases = () => {
+  const handleGenerateTestCases = async () => {
+    if (!useCase) return;
     setIsGenerating(true);
-    // Lógica futura de geração aqui
-    setTimeout(() => setIsGenerating(false), 2000);
+    try {
+      await useCaseService.deleteTestCasesByUseCaseId(useCase.id);
+      
+      const generatedTests = await aiGenerationService.generateTestCases(useCase);
+      
+      await useCaseService.createTestCases(generatedTests, useCase.id);
+    } catch (error) {
+      console.error("Erro ao gerar casos de teste:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (isLoading) {

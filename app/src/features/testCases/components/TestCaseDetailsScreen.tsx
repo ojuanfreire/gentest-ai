@@ -136,7 +136,7 @@ export const TestCaseDetailsScreen = () => {
           <ul className="flex flex-col gap-2 list-none">
             {parsed.map((item, index) => (
               <li key={index} className="text-slate-300 break-words">
-                {item}
+                {index + 1}. {item}
               </li>
             ))}
           </ul>

@@ -10,25 +10,29 @@ import { TestCaseDetailsScreen } from "./features/testCases/components/TestCaseD
 import { ProjectMenuScreen } from "./features/projects/components/ProjectMenuScreen";
 import { CodeSkeletonScreen } from "./features/testCases/components/CodeSkeletonScreen";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { ScrollToTop } from "./components/common/ScrollToTop";
 
 function App() {
   return (
-    <Routes>
-      {/* Rotas Públicas */}
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Rotas Públicas */}
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
-      {/* Rotas Protegidas */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Navigate to="/projects" replace />} />
-        <Route path="/projects" element={<ProjectMenuScreen />} />
-        <Route path="/project/:projectId/artifacts" element={<ProjectArtifactsScreen />} />
-        <Route path="/use-case/:id" element={<UseCaseDetailsScreen />} />
-        <Route path="/test-case/:id" element={<TestCaseDetailsScreen />} />
-        <Route path="/skeleton/:id" element={<CodeSkeletonScreen />} />
-      </Route>
-    </Routes>
+        {/* Rotas Protegidas */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Navigate to="/projects" replace />} />
+          <Route path="/projects" element={<ProjectMenuScreen />} />
+          <Route path="/project/:projectId/artifacts" element={<ProjectArtifactsScreen />} />
+          <Route path="/use-case/:id" element={<UseCaseDetailsScreen />} />
+          <Route path="/test-case/:id" element={<TestCaseDetailsScreen />} />
+          <Route path="/skeleton/:id" element={<CodeSkeletonScreen />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

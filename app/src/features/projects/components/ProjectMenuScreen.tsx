@@ -41,6 +41,7 @@ export const ProjectMenuScreen = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleProjectClick = (project: Project) => {
     navigate(`/project/${project.id}/artifacts`);
@@ -85,6 +86,10 @@ export const ProjectMenuScreen = () => {
     }
   };
 
+  const filteredProjects = projects.filter((project) =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const renderLoading = () => (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
@@ -121,7 +126,7 @@ export const ProjectMenuScreen = () => {
       initial="hidden"
       animate="visible"
     >
-      {projects.map((project) => (
+      {filteredProjects.map((project) => (
         <motion.div key={project.id} variants={itemVariants}>
           <ProjectCard
             project={project}
@@ -132,6 +137,26 @@ export const ProjectMenuScreen = () => {
         </motion.div>
       ))}
     </motion.div>
+  );
+
+  const renderNoSearchResults = () => (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="mb-4 rounded-full bg-slate-800/50 p-4 text-slate-500">
+        <Search size={32} />
+      </div>
+      <h3 className="text-lg font-medium text-white">
+        Nenhum projeto encontrado
+      </h3>
+      <p className="text-slate-400">
+        Não encontramos projetos com o termo "{searchTerm}"
+      </p>
+      <Button
+        onClick={() => setSearchTerm("")}
+        className="mt-4 text-blue-400 hover:text-blue-300 bg-transparent border-none"
+      >
+        Limpar busca
+      </Button>
+    </div>
   );
 
   const renderEmptyState = () => (
@@ -179,9 +204,15 @@ export const ProjectMenuScreen = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400">
-                <Search size={24} />
-                <span className="text-sm">Buscar...</span>
+              <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400 focus-within:border-blue-500/50 focus-within:text-blue-400 transition-colors">
+                <Search size={20} />
+                <input
+                  type="text"
+                  placeholder="Buscar projetos..."
+                  className="bg-transparent border-none outline-none text-sm text-slate-200 placeholder-slate-500 w-48"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
 
               <Button
@@ -210,7 +241,15 @@ export const ProjectMenuScreen = () => {
             {loading && renderLoading()}
             {!loading && error && renderError()}
             {!loading && !error && projects.length === 0 && renderEmptyState()}
-            {!loading && !error && projects.length > 0 && renderProjectsList()}
+            {!loading &&
+              !error &&
+              projects.length > 0 &&
+              filteredProjects.length === 0 &&
+              renderNoSearchResults()}
+            {!loading &&
+              !error &&
+              filteredProjects.length > 0 &&
+              renderProjectsList()}
           </div>
         </div>
       </main>

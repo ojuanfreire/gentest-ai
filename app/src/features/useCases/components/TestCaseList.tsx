@@ -39,10 +39,12 @@ export const TestCaseList = ({
     isSubmitting,
     handleEditTestCase,
     handleDeleteTestCase,
+    fetchTestCases,
   } = useTestCases(useCaseId);
 
   const [testToEdit, setTestToEdit] = useState<TestCase | null>(null);
   const [testToDelete, setTestToDelete] = useState<TestCase | null>(null);
+  const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -74,6 +76,18 @@ export const TestCaseList = ({
       if (currentTestCases.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
       }
+    }
+  };
+
+  const handleRegenerateClick = () => {
+    setShowRegenerateConfirm(true);
+  };
+
+  const confirmRegenerate = async () => {
+    if (onGenerate) {
+      setShowRegenerateConfirm(false);
+      await onGenerate();
+      fetchTestCases();
     }
   };
 
@@ -114,7 +128,10 @@ export const TestCaseList = ({
 
           {onGenerate && (
             <Button
-              onClick={onGenerate}
+              onClick={async () => {
+                await onGenerate();
+                fetchTestCases();
+              }}
               disabled={isGenerating}
               className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-2.5 font-bold text-white shadow-lg shadow-violet-500/20 hover:scale-[1.02] hover:shadow-violet-500/40 transition-all border-none"
             >
@@ -243,22 +260,11 @@ export const TestCaseList = ({
           </div>
 
           <div className="flex items-center gap-2 mt-4">
-            {/* Botão Secundário para quando já houver itens */}
-            {testCases.length > 0 && onGenerate && (
-              <Button
-                onClick={onGenerate}
-                disabled={isGenerating}
-                className="hidden sm:flex items-center gap-2 rounded-lg bg-violet-600/10 px-3 py-1.5 text-xs font-bold text-violet-400 hover:bg-violet-600/20 hover:text-violet-300 border border-violet-500/20 transition-all"
-              >
-                <Wand2 size={14} />
-                {isGenerating ? "Gerando..." : "Gerar Mais"}
-              </Button>
-            )}
 
             {/* Botão de Refresh */}
-            {onGenerate && (
+            {onGenerate && testCases.length > 0 && (
               <button
-                onClick={onGenerate}
+                onClick={handleRegenerateClick}
                 disabled={isGenerating}
                 title="Gerar os Casos de Teste novamente"
                 className="flex items-center justify-center rounded-lg p-2 text-slate-400 transition-all hover:bg-slate-800 hover:text-blue-400 disabled:opacity-50 hover:border-slate-700 border border-transparent"
@@ -290,6 +296,15 @@ export const TestCaseList = ({
         isDeleting={isSubmitting}
         title="Excluir Caso de Teste"
         message={`Tem certeza que deseja excluir o teste "${testToDelete?.title}"?`}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={showRegenerateConfirm}
+        onClose={() => setShowRegenerateConfirm(false)}
+        onConfirm={confirmRegenerate}
+        isDeleting={isGenerating}
+        title="Regerar Casos de Teste"
+        message="Tem certeza que deseja gerar novos casos de teste? Os casos de teste existentes serão excluídos permanentemente."
       />
     </section>
   );
