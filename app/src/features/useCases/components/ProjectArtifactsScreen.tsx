@@ -58,6 +58,7 @@ export const ProjectArtifactsScreen = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUseCase, setSelectedUseCase] = useState<UseCase | null>(null);
   const [useCaseToDelete, setUseCaseToDelete] = useState<UseCase | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (projectId) {
@@ -97,6 +98,10 @@ export const ProjectArtifactsScreen = () => {
     const success = await handleDeleteUseCase(useCaseToDelete.id);
     if (success) setUseCaseToDelete(null);
   };
+
+  const filteredUseCases = useCases.filter((useCase) =>
+    useCase.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderLoading = () => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -157,7 +162,7 @@ export const ProjectArtifactsScreen = () => {
       initial="hidden"
       animate="visible"
     >
-      {useCases.map((useCase) => (
+      {filteredUseCases.map((useCase) => (
         <motion.div
           key={useCase.id}
           variants={itemVariants}
@@ -173,6 +178,26 @@ export const ProjectArtifactsScreen = () => {
         </motion.div>
       ))}
     </motion.div>
+  );
+
+  const renderNoSearchResults = () => (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="mb-4 rounded-full bg-slate-800/50 p-4 text-slate-500">
+        <Search size={32} />
+      </div>
+      <h3 className="text-lg font-medium text-white">
+        Nenhum caso de uso encontrado
+      </h3>
+      <p className="text-slate-400">
+        Não encontramos casos de uso com o termo "{searchTerm}"
+      </p>
+      <Button
+        onClick={() => setSearchTerm("")}
+        className="mt-4 text-blue-400 hover:text-blue-300 bg-transparent border-none"
+      >
+        Limpar busca
+      </Button>
+    </div>
   );
 
   return (
@@ -225,9 +250,15 @@ export const ProjectArtifactsScreen = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400">
+                <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400 focus-within:border-blue-500/50 focus-within:text-blue-400 transition-colors">
                   <Search size={18} />
-                  <span className="text-sm">Buscar caso de uso...</span>
+                  <input
+                    type="text"
+                    placeholder="Buscar caso de uso..."
+                    className="bg-transparent border-none outline-none text-sm text-slate-200 placeholder-slate-500 w-48"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
               <Button
@@ -245,7 +276,15 @@ export const ProjectArtifactsScreen = () => {
             {loading && renderLoading()}
             {!loading && error && renderError()}
             {!loading && !error && useCases.length === 0 && renderEmptyState()}
-            {!loading && !error && useCases.length > 0 && renderUseCases()}
+            {!loading &&
+              !error &&
+              useCases.length > 0 &&
+              filteredUseCases.length === 0 &&
+              renderNoSearchResults()}
+            {!loading &&
+              !error &&
+              filteredUseCases.length > 0 &&
+              renderUseCases()}
           </div>
         </div>
       </main>
