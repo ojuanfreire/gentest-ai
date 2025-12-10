@@ -3,7 +3,6 @@ import type { UseCase } from "../../../types/index";
 import type { UseCaseFormData } from "../components/CreateUseCaseModal";
 
 import { useCaseService } from "../services/useCaseService";
-import { aiGenerationService } from "../../ai/services/aiGenerationService";
 
 export const useUseCases = () => {
   const [loading, setLoading] = useState(false);
