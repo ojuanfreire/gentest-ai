@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import type { Project } from "../../../types";
-import { MoreVertical, Folder, Edit2, Trash2, Calendar, ArrowRight } from "lucide-react";
+import {
+  MoreVertical,
+  Folder,
+  Edit2,
+  Trash2,
+  Calendar,
+  ArrowRight,
+} from "lucide-react";
 
 type ProjectCardProps = {
   project: Project;
@@ -51,17 +58,15 @@ export const ProjectCard = ({
 
   return (
     <div
-      className="group relative flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/40 p-6 shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:bg-slate-900/60 hover:shadow-2xl hover:shadow-blue-900/10 cursor-pointer"
+      className="group relative flex h-full flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/40 p-6 shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:bg-slate-900/60 hover:shadow-2xl hover:shadow-blue-900/10 cursor-pointer"
       onClick={handleCardClick}
     >
       <div>
         <div className="flex items-start justify-between">
-          {/* Ícone com Gradiente */}
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 text-blue-400 ring-1 ring-white/5 transition-transform group-hover:scale-110 group-hover:from-blue-600/30 group-hover:to-indigo-600/30">
             <Folder size={24} />
           </div>
 
-          {/* Menu de Opções */}
           <div className="relative" ref={menuRef}>
             <button
               className={`rounded-lg p-1.5 transition-all hover:bg-slate-800 hover:text-white ${
@@ -74,7 +79,6 @@ export const ProjectCard = ({
               <MoreVertical size={20} />
             </button>
 
-            {/* Dropdown Menu Glass */}
             {isMenuOpen && (
               <div className="absolute right-0 top-8 z-20 w-40 origin-top-right rounded-xl border border-slate-700/50 bg-slate-900/90 p-1 shadow-xl backdrop-blur-xl ring-1 ring-black/20 animate-fade-in-down">
                 <button
@@ -96,7 +100,6 @@ export const ProjectCard = ({
           </div>
         </div>
 
-        {/* Título e Descrição */}
         <h3 className="text-lg font-bold text-slate-100 transition-colors group-hover:text-blue-200">
           {project.name}
         </h3>
@@ -105,16 +108,14 @@ export const ProjectCard = ({
         </p>
       </div>
 
-      {/* Footer do Card */}
       <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
         <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
           <Calendar size={14} />
           {new Date(project.createdAt).toLocaleDateString()}
         </div>
-        
-        {/* Seta indicativa */}
+
         <div className="flex items-center gap-1 text-xs font-bold text-blue-500 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100">
-            Abrir <ArrowRight size={14} />
+          Abrir <ArrowRight size={14} />
         </div>
       </div>
     </div>

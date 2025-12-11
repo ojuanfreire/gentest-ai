@@ -21,9 +21,10 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
       const tcData = await useCaseService.getTestCaseById(testCaseId);
       setTestCase(tcData);
 
-      const skData = await codeSkeletonService.getSkeletonsByTestCaseId(testCaseId);
+      const skData = await codeSkeletonService.getSkeletonsByTestCaseId(
+        testCaseId
+      );
       setSkeletons(skData);
-
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Erro ao carregar detalhes.");
@@ -71,15 +72,17 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
 
   const generateSkeleton = async (framework: SkeletonFramework) => {
     if (!testCase) return;
-    
+
     setIsSubmitting(true);
     try {
-      const newSkeleton = await codeSkeletonService.generateSkeleton(testCase, framework);
-      
+      const newSkeleton = await codeSkeletonService.generateSkeleton(
+        testCase,
+        framework
+      );
+
       setSkeletons((prev) => [newSkeleton, ...prev]);
-      
+
       navigate(`/skeleton/${newSkeleton.id}`);
-      
     } catch (err) {
       if (err instanceof Error) {
         alert("Erro ao gerar código: " + err.message);
@@ -90,11 +93,9 @@ export const useTestCaseDetails = (testCaseId: string | undefined) => {
   };
 
   const handleDeleteSkeleton = async (skeletonId: string) => {
-    if(!confirm("Deseja excluir este código?")) return;
-    
     try {
       await codeSkeletonService.deleteSkeleton(skeletonId);
-      setSkeletons((prev) => prev.filter(s => s.id !== skeletonId));
+      setSkeletons((prev) => prev.filter((s) => s.id !== skeletonId));
     } catch (err) {
       if (err instanceof Error) {
         alert("Erro ao excluir: " + err.message);
