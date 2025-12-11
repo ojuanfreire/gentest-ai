@@ -42,6 +42,7 @@ export const TestCaseDetailsScreen = () => {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [skeletonToDelete, setSkeletonToDelete] = useState<string | null>(null);
 
   const [selectedFramework, setSelectedFramework] = useState<SkeletonFramework>(
     "JavaScript + Cypress"
@@ -87,11 +88,17 @@ export const TestCaseDetailsScreen = () => {
     navigate(`/skeleton/${skeletonId}`);
   };
 
-  const handleDeleteSkeletonClick = async (skeletonId: string) => {
-    await handleDeleteSkeleton(skeletonId);
+  const handleDeleteSkeletonClick = (skeletonId: string) => {
+    setSkeletonToDelete(skeletonId);
+  };
+
+  const confirmDeleteSkeleton = async () => {
+    if (!skeletonToDelete) return;
+    await handleDeleteSkeleton(skeletonToDelete);
     if (currentSkeletons.length === 1 && currentPage > 1) {
       setCurrentPage((prev) => prev - 1);
     }
+    setSkeletonToDelete(null);
   };
 
   if (loading) {
@@ -124,7 +131,6 @@ export const TestCaseDetailsScreen = () => {
     );
   }
 
-  // Função para formatar os passos caso venham como array JSON
   const renderFormattedText = (text: string | undefined) => {
     if (!text) return null;
 
@@ -208,7 +214,6 @@ export const TestCaseDetailsScreen = () => {
         <div className="grid gap-8 grid-cols-1">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-1 shadow-lg backdrop-blur-sm">
             <div className="rounded-xl bg-slate-900/60 p-6 sm:p-8">
-              {/* Descrição */}
               <div className="mb-8 group">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
                   Descrição do Cenário
@@ -222,7 +227,6 @@ export const TestCaseDetailsScreen = () => {
                 </div>
               </div>
 
-              {/* Grid Passos vs Resultado */}
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div className="flex flex-col h-full group">
                   <h4 className="mb-3 text-xs font-bold uppercase text-slate-400 flex items-center gap-2 group-hover:text-blue-400 transition-colors">
@@ -255,7 +259,6 @@ export const TestCaseDetailsScreen = () => {
               </h3>
             </div>
 
-            {/* Gerador */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6 sm:p-8 flex flex-col lg:flex-row gap-6 items-end">
               <div className="flex-1 w-full">
                 <label className="mb-2 block text-sm font-medium text-slate-400">
@@ -292,7 +295,6 @@ export const TestCaseDetailsScreen = () => {
               </Button>
             </div>
 
-            {/* Lista de Skeletons */}
             <div className="space-y-4">
               <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider pl-1">
                 Histórico de Gerações ({skeletons.length})
@@ -386,6 +388,15 @@ export const TestCaseDetailsScreen = () => {
         isDeleting={isSubmitting}
         title="Excluir Caso de Teste"
         message={`Tem certeza que deseja excluir "${testCase.title}"? Todos os códigos gerados também serão perdidos.`}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={!!skeletonToDelete}
+        onClose={() => setSkeletonToDelete(null)}
+        onConfirm={confirmDeleteSkeleton}
+        isDeleting={isSubmitting}
+        title="Excluir Código Gerado"
+        message="Tem certeza que deseja excluir este esqueleto de código? Esta ação não pode ser desfeita."
       />
 
       <EditTestCaseModal

@@ -26,7 +26,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5 }, // Removido ease: "easeOut"
+    transition: { duration: 0.5 },
   },
 };
 
@@ -102,7 +102,7 @@ export const ProjectMenuScreen = () => {
   );
 
   const renderError = () => (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-900/10 p-10 text-center backdrop-blur-sm">
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-900/10 p-6 sm:p-10 text-center backdrop-blur-sm">
       <div className="mb-4 rounded-full bg-red-500/10 p-3 text-red-400">
         <RefreshCw size={32} />
       </div>
@@ -127,7 +127,13 @@ export const ProjectMenuScreen = () => {
       animate="visible"
     >
       {filteredProjects.map((project) => (
-        <motion.div key={project.id} variants={itemVariants}>
+        <motion.div
+          key={project.id}
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          className="h-full"
+        >
           <ProjectCard
             project={project}
             onClick={handleProjectClick}
@@ -140,7 +146,7 @@ export const ProjectMenuScreen = () => {
   );
 
   const renderNoSearchResults = () => (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="flex flex-col items-center justify-center py-10 sm:py-20 text-center">
       <div className="mb-4 rounded-full bg-slate-800/50 p-4 text-slate-500">
         <Search size={32} />
       </div>
@@ -160,23 +166,23 @@ export const ProjectMenuScreen = () => {
   );
 
   const renderEmptyState = () => (
-    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/30 p-10 text-center transition-all hover:border-slate-700 hover:bg-slate-900/50">
-      <div className="group mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-800 shadow-inner ring-1 ring-white/5 transition-transform duration-500 hover:scale-110 hover:rotate-3">
+    <div className="flex min-h-[300px] sm:min-h-[400px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/30 p-6 sm:p-10 text-center transition-all hover:border-slate-700 hover:bg-slate-900/50">
+      <div className="group mb-6 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-slate-800 shadow-inner ring-1 ring-white/5 transition-transform duration-500 hover:scale-110 hover:rotate-3">
         <FolderOpen
-          size={40}
-          className="text-blue-500 opacity-80 transition-opacity group-hover:opacity-100"
+          size={32}
+          className="text-blue-500 opacity-80 transition-opacity group-hover:opacity-100 sm:w-10 sm:h-10"
         />
       </div>
-      <h3 className="text-2xl font-bold text-white">
+      <h3 className="text-xl sm:text-2xl font-bold text-white">
         Nenhum projeto encontrado
       </h3>
-      <p className="mt-3 max-w-md text-slate-400">
+      <p className="mt-3 max-w-md text-sm sm:text-base text-slate-400">
         Parece que você ainda não criou nenhum projeto. Comece criando um
         workspace para organizar seus casos de uso.
       </p>
       <Button
         onClick={() => setIsCreateModalOpen(true)}
-        className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-3 font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-105 hover:shadow-blue-500/40"
+        className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 sm:px-8 py-2.5 sm:py-3 font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-105 hover:shadow-blue-500/40"
       >
         <Plus size={20} />
         Criar Primeiro Projeto
@@ -191,25 +197,25 @@ export const ProjectMenuScreen = () => {
       transition={{ duration: 0.5 }}
       className="flex min-h-screen w-full flex-col bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(255,255,255,0))] text-white"
     >
-      <main className="flex-1 p-6 lg:p-10">
-        <div className="mx-auto max-w-7xl space-y-10">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <main className="flex-1 p-4 sm:p-6 lg:p-10">
+        <div className="mx-auto max-w-7xl space-y-6 sm:space-y-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
                 Dashboard
               </h1>
-              <p className="mt-2 text-slate-400">
+              <p className="mt-2 text-sm sm:text-base text-slate-400">
                 Gerencie seus projetos e testes automatizados
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400 focus-within:border-blue-500/50 focus-within:text-blue-400 transition-colors">
-                <Search size={20} />
+            <div className="flex w-full items-center gap-3 sm:w-auto sm:gap-4">
+              <div className="flex flex-1 items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2 text-slate-400 focus-within:border-blue-500/50 focus-within:text-blue-400 transition-colors sm:flex-none">
+                <Search size={20} className="shrink-0" />
                 <input
                   type="text"
                   placeholder="Buscar projetos..."
-                  className="bg-transparent border-none outline-none text-sm text-slate-200 placeholder-slate-500 w-48"
+                  className="w-full bg-transparent border-none outline-none text-sm text-slate-200 placeholder-slate-500 sm:w-48"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -218,7 +224,7 @@ export const ProjectMenuScreen = () => {
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
                 disabled={loading || isSubmitting}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
+                className="flex shrink-0 items-center gap-2 rounded-lg bg-blue-600 px-4 sm:px-5 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100"
               >
                 <Plus size={20} />
                 <span className="hidden sm:inline">Novo Projeto</span>
@@ -237,7 +243,7 @@ export const ProjectMenuScreen = () => {
             </button>
           </div>
 
-          <div className="min-h-[400px]">
+          <div className="min-h-[300px] sm:min-h-[400px]">
             {loading && renderLoading()}
             {!loading && error && renderError()}
             {!loading && !error && projects.length === 0 && renderEmptyState()}
