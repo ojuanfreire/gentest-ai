@@ -83,9 +83,11 @@ export const UseCaseDetailsScreen = () => {
     setIsGenerating(true);
     try {
       await useCaseService.deleteTestCasesByUseCaseId(useCase.id);
-      
-      const generatedTests = await aiGenerationService.generateTestCases(useCase);
-      
+
+      const generatedTests = await aiGenerationService.generateTestCases(
+        useCase
+      );
+
       await useCaseService.createTestCases(generatedTests, useCase.id);
     } catch (error) {
       console.error("Erro ao gerar casos de teste:", error);
@@ -202,7 +204,7 @@ export const UseCaseDetailsScreen = () => {
                       Ator Principal
                     </h4>
                   </div>
-                  <div className="rounded-lg border border-slate-800 bg-slate-950/30 p-3 text-sm text-slate-300 font-medium group-hover:border-slate-700 transition-colors">
+                  <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 text-sm text-slate-300 font-medium group-hover:border-slate-700 transition-colors">
                     {useCase.actor}
                   </div>
                 </div>
@@ -214,7 +216,7 @@ export const UseCaseDetailsScreen = () => {
                       Criado em
                     </h4>
                   </div>
-                  <div className="rounded-lg border border-slate-800 bg-slate-950/30 p-3 text-sm text-slate-300 font-medium group-hover:border-slate-700 transition-colors">
+                  <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 text-sm text-slate-300 font-medium group-hover:border-slate-700 transition-colors">
                     {new Date(
                       useCase.createdAt || Date.now()
                     ).toLocaleDateString("pt-BR")}
@@ -229,7 +231,7 @@ export const UseCaseDetailsScreen = () => {
                     Pré-condições
                   </h4>
                 </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-950/30 p-4 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
+                <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-4 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
                   {useCase.preconditions || "Nenhuma pré-condição definida."}
                 </div>
               </div>
@@ -240,7 +242,7 @@ export const UseCaseDetailsScreen = () => {
                     <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
                     Fluxo Principal
                   </h4>
-                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/10 p-5 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
+                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
                     {useCase.mainFlow}
                   </div>
                 </div>
@@ -250,7 +252,7 @@ export const UseCaseDetailsScreen = () => {
                     <span className="w-2 h-2 rounded-full bg-slate-600"></span>
                     Fluxos Alternativos
                   </h4>
-                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/30 p-5 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
+                  <div className="flex-1 rounded-lg border border-slate-800 bg-slate-950/50 p-5 text-sm text-slate-300 whitespace-pre-wrap break-words group-hover:border-slate-700 transition-colors">
                     {useCase.alternativeFlows || "Nenhum fluxo alternativo."}
                   </div>
                 </div>
